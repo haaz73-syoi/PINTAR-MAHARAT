@@ -3,179 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendidikan Islam KSSM: Lahn & Maratib</title>
+    <title>Pendidikan Islam KSSM: Lahn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        utama: '#047857', // emerald-700
+                        utama: '#059669', // emerald-600
                         kedua: '#10b981', // emerald-500
-                        aksen: '#fbbf24', // amber-400
-                        latar: '#f0fdf4', // emerald-50
+                        gelap: '#064e3b', // emerald-900
+                        aksen: '#f59e0b', // amber-500
+                        latar: '#ecfdf5', // emerald-50
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Poppins', 'sans-serif'],
                         arabic: ['"Amiri"', '"Scheherazade New"', 'serif']
+                    },
+                    boxShadow: {
+                        '3d': '0 4px 0 0 rgba(0,0,0,0.2)',
+                        '3d-hover': '0 2px 0 0 rgba(0,0,0,0.2)',
+                        '3d-utama': '0 6px 0 0 #047857',
+                        '3d-utama-hover': '0 2px 0 0 #047857',
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f0fdf4; }
-        .font-arabic { font-family: 'Amiri', serif; font-size: 1.5rem; line-height: 2.5rem; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        .font-arabic { font-family: 'Amiri', serif; font-size: 1.8rem; line-height: 2.8rem; }
         
+        .bg-pattern {
+            background-image: radial-gradient(#10b981 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .tab-btn {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         .tab-btn.active {
-            background-color: #f0fdf4; 
-            color: #047857;
-            font-weight: 700;
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
+            background-color: white; 
+            color: #059669;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
         }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        .tab-content.active { display: block; animation: slideUp 0.5s ease-out forwards; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
         
-        .hover-scale { transition: transform 0.2s; }
-        .hover-scale:hover { transform: scale(1.02); }
+        .card-3d {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-3d:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .ws-cell { 
+            transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s; 
+            cursor: pointer; 
+            user-select: none; 
+            touch-action: manipulation;
+            box-shadow: 0 4px 0 #cbd5e1;
+            border-radius: 0.5rem;
+            position: relative;
+        }
+        .ws-cell:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #cbd5e1;
+        }
+        .ws-cell.selected { 
+            background-color: #fde047; 
+            color: #854d0e;
+            box-shadow: 0 4px 0 #eab308; 
+            border: 2px solid #facc15;
+            z-index: 10; 
+            animation: pulse 1.5s infinite;
+        }
+        .ws-cell.found { 
+            background-color: #10b981; 
+            color: white; 
+            box-shadow: 0 4px 0 #047857; 
+            border: none;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
         
-        /* Chat bot styling */
+        .word-list-item { transition: all 0.3s ease; }
+        .word-list-item.found { 
+            background-color: #d1fae5;
+            color: #059669;
+            text-decoration: line-through; 
+            transform: scale(1.05);
+            border-left: 4px solid #10b981;
+        }
+
         #chatbox {
             height: 400px;
             overflow-y: auto;
             scroll-behavior: smooth;
         }
-        .msg-ai { background-color: #e6f4ea; color: #064e3b; border-bottom-right-radius: 1rem; border-top-right-radius: 1rem; border-top-left-radius: 1rem; }
-        .msg-user { background-color: #d1fae5; color: #065f46; border-bottom-left-radius: 1rem; border-top-right-radius: 1rem; border-top-left-radius: 1rem; margin-left: auto;}
-        
-        /* Word Search Styling */
-        .ws-cell { transition: all 0.2s; cursor: pointer; user-select: none; touch-action: manipulation; }
-        .ws-cell.selected { background-color: #fef08a; transform: scale(1.1); box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); border-color: #f59e0b; z-index: 10; }
-        .ws-cell.found { background-color: #34d399; color: white; border-color: #059669; transform: scale(1.05); }
-        .word-list-item.found { text-decoration: line-through; color: #9ca3af; }
+        .chat-bubble {
+            position: relative;
+        }
+        .msg-ai { 
+            background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%); 
+            color: #064e3b; 
+            border-radius: 1rem 1rem 1rem 0; 
+            border: 1px solid #a7f3d0;
+        }
+        .msg-user { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            color: white; 
+            border-radius: 1rem 1rem 0 1rem; 
+            margin-left: auto;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+        }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="text-gray-800 relative">
+    
+    <div class="bg-pattern"></div>
 
-    <header class="bg-utama text-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center gap-3 mb-4 md:mb-0">
-                <span class="text-3xl">📖</span>
+    <header class="bg-gradient-to-r from-utama via-emerald-500 to-teal-500 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+            <div class="absolute left-1/2 -bottom-10 w-32 h-32 bg-yellow-300 opacity-20 rounded-full blur-xl"></div>
+            
+            <div class="flex items-center gap-4 mb-4 md:mb-0 relative z-10 w-full md:w-auto">
+                <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-white/30 animate-float">
+                    📖
+                </div>
                 <div>
-                    <h1 class="text-2xl font-bold">Maharat Al-Quran</h1>
-                    <p class="text-emerald-200 text-sm">Tingkatan 1 KSSM: Lahn & Maratib Qiraat</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight drop-shadow-md">Maharat Al-Quran</h1>
+                    <p class="text-emerald-100 text-sm font-semibold mt-1 bg-black/10 inline-block px-3 py-1 rounded-full backdrop-blur-sm">Tingkatan 1 KSSM</p>
                 </div>
             </div>
-            <nav class="flex overflow-x-auto w-full md:w-auto gap-2 md:gap-4 pb-2 md:pb-0 hide-scroll">
-                <button onclick="bukaTab('tab-nota')" id="btn-tab-nota" class="tab-btn active px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">📚 Nota Lahn</button>
-                <button onclick="bukaTab('tab-maratib')" id="btn-tab-maratib" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">⏱️ Maratib</button>
-                <button onclick="bukaTab('tab-kuiz')" id="btn-tab-kuiz" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">🧠 Word Search</button>
-                <button onclick="bukaTab('tab-chat')" id="btn-tab-chat" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">🤖 Tanya Ustaz 'Akashah</button>
-                <button onclick="bukaTab('tab-guru')" id="btn-tab-guru" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">📊 Rekod Live</button>
+            
+            <nav class="flex overflow-x-auto w-full md:w-auto gap-2 md:gap-3 pb-2 md:pb-0 hide-scroll relative z-10 px-1">
+                <button onclick="bukaTab('tab-nota')" id="btn-tab-nota" class="tab-btn active px-5 py-2.5 text-sm md:text-base font-bold whitespace-nowrap rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20">📚 Nota Lahn</button>
+                <button onclick="bukaTab('tab-senario')" id="btn-tab-senario" class="tab-btn px-5 py-2.5 text-sm md:text-base font-bold whitespace-nowrap rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20">🕵️‍♂️ Detektif Lahn</button>
+                <button onclick="bukaTab('tab-kuiz')" id="btn-tab-kuiz" class="tab-btn px-5 py-2.5 text-sm md:text-base font-bold whitespace-nowrap rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20">🎮 Word Search</button>
+                <button onclick="bukaTab('tab-chat')" id="btn-tab-chat" class="tab-btn px-5 py-2.5 text-sm md:text-base font-bold whitespace-nowrap rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20">🤖 Ustaz 'Akashah AI</button>
+                <button onclick="bukaTab('tab-guru')" id="btn-tab-guru" class="tab-btn px-5 py-2.5 text-sm md:text-base font-bold whitespace-nowrap rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20">📊 Rekod Live</button>
             </nav>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-8 max-w-5xl">
+    <main class="container mx-auto px-4 py-10 max-w-6xl relative z-10">
         
-        <!-- TAB 1: Nota Lahn -->
         <section id="tab-nota" class="tab-content active">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-utama mb-4">Kesalahan Membaca Al-Quran (Lahn)</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Lahn bermaksud kesalahan atau penyimpangan yang berlaku ketika membaca Al-Quran. Ia terbahagi kepada dua jenis: <b class="text-red-600">Lahn Jali</b> (Nyata/Besar) dan <b class="text-orange-500">Lahn Khafi</b> (Tersembunyi/Kecil).</p>
+            <div class="text-center mb-12">
+                <div class="inline-block bg-white px-6 py-2 rounded-full shadow-sm border border-emerald-100 text-utama font-bold text-sm tracking-wider uppercase mb-4">Nota Padat Visual</div>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gelap mb-4 drop-shadow-sm">Kesalahan Membaca Al-Quran (Lahn)</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Lahn bermaksud kesalahan atau penyimpangan. Ia terbahagi kepada dua jenis utama iaitu <span class="bg-red-100 text-red-700 px-2 rounded-md font-bold">Lahn Jali</span> dan <span class="bg-orange-100 text-orange-700 px-2 rounded-md font-bold">Lahn Khafi</span>.</p>
             </div>
 
             <!-- Lahn Jali -->
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-12 border-t-4 border-red-500">
-                <div class="bg-red-50 p-6 border-b border-red-100">
-                    <h3 class="text-2xl font-bold text-red-700 flex items-center gap-2"><span class="text-3xl">⚠️</span> Lahn Jali (Kesalahan Nyata)</h3>
-                    <p class="text-red-600 mt-2">Kesalahan besar yang boleh <b class="font-bold underline">mengubah makna</b> ayat. Hukum melakukannya sengaja adalah <b>Haram</b>.</p>
+            <div class="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden mb-16 border border-white relative">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-pink-500"></div>
+                <div class="p-8 md:p-10 border-b border-gray-100 flex flex-col md:flex-row items-center gap-6 bg-gradient-to-br from-red-50 to-white">
+                    <div class="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center text-4xl shadow-inner border border-red-200 transform rotate-3">⚠️</div>
+                    <div>
+                        <h3 class="text-3xl font-extrabold text-red-700 mb-2">Lahn Jali (Kesalahan Nyata)</h3>
+                        <p class="text-gray-700 text-lg">Kesalahan besar yang <b class="text-red-600 bg-red-50 px-2 rounded">MENGUBAH MAKNA</b> ayat secara total. Hukum melakukannya adalah <b>Haram</b> dan berdosa jika sengaja.</p>
+                    </div>
                 </div>
-                <div class="p-6 grid md:grid-cols-2 gap-6">
-                    <!-- Jali 1 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">1. Menukar Huruf</h4>
-                        <div class="flex flex-col gap-2">
-                            <div class="bg-green-100 p-3 rounded text-green-900">
-                                <p class="text-xs font-bold uppercase text-green-700 mb-1">Betul (Asal)</p>
-                                <p class="font-arabic text-xl">عَصَى</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">Menderhaka</span></p>
+                
+                <div class="p-6 md:p-10 grid md:grid-cols-2 gap-8 bg-white">
+                    <div class="card-3d bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-gelap text-white rounded-full flex items-center justify-center font-bold">1</span>
+                            <h4 class="font-bold text-xl text-gray-800">Menukar Huruf</h4>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                                <p class="text-xs font-bold uppercase text-green-700 mb-1 flex items-center gap-1"><span>✅</span> Betul</p>
+                                <p class="font-arabic text-2xl text-gelap">عَصَى</p>
+                                <p class="text-sm text-green-800 mt-1">Makna: <span class="font-semibold italic">Menderhaka</span></p>
                             </div>
-                            <div class="bg-red-100 p-3 rounded text-red-900">
-                                <p class="text-xs font-bold uppercase text-red-700 mb-1">Salah (Lahn)</p>
-                                <p class="font-arabic text-xl">عَسَى</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">Mungkin</span></p>
+                            <div class="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-100">
+                                <p class="text-xs font-bold uppercase text-red-700 mb-1 flex items-center gap-1"><span>❌</span> Salah</p>
+                                <p class="font-arabic text-2xl text-red-900">عَسَى</p>
+                                <p class="text-sm text-red-800 mt-1">Makna: <span class="font-semibold italic">Mungkin / Mudah-mudahan</span></p>
                             </div>
                         </div>
                     </div>
-                    <!-- Jali 2 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">2. Menukar Baris</h4>
-                        <div class="flex flex-col gap-2">
-                            <div class="bg-green-100 p-3 rounded text-green-900">
-                                <p class="text-xs font-bold uppercase text-green-700 mb-1">Betul (Asal)</p>
-                                <p class="font-arabic text-xl">أَنعَمتَ</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">Engkau (Allah) beri nikmat</span></p>
+                    <div class="card-3d bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-gelap text-white rounded-full flex items-center justify-center font-bold">2</span>
+                            <h4 class="font-bold text-xl text-gray-800">Menukar Baris</h4>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                                <p class="text-xs font-bold uppercase text-green-700 mb-1 flex items-center gap-1"><span>✅</span> Betul</p>
+                                <p class="font-arabic text-2xl text-gelap">أَنعَمتَ</p>
+                                <p class="text-sm text-green-800 mt-1">Makna: <span class="font-semibold italic">Engkau (Allah) beri nikmat</span></p>
                             </div>
-                            <div class="bg-red-100 p-3 rounded text-red-900">
-                                <p class="text-xs font-bold uppercase text-red-700 mb-1">Salah (Lahn)</p>
-                                <p class="font-arabic text-xl">أَنعَمتُ</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">Aku beri nikmat</span></p>
+                            <div class="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-100">
+                                <p class="text-xs font-bold uppercase text-red-700 mb-1 flex items-center gap-1"><span>❌</span> Salah</p>
+                                <p class="font-arabic text-2xl text-red-900">أَنعَمتُ</p>
+                                <p class="text-sm text-red-800 mt-1">Makna: <span class="font-semibold italic">Aku beri nikmat</span></p>
                             </div>
                         </div>
                     </div>
-                    <!-- Jali 3 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">3. Menambah Huruf</h4>
-                        <div class="flex flex-col gap-2">
-                            <div class="bg-green-100 p-3 rounded text-green-900">
-                                <p class="text-xs font-bold uppercase text-green-700 mb-1">Betul (Asal)</p>
-                                <p class="font-arabic text-xl">وَلَا أَنتُم</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">Dan kamu bukan (penyembah)</span></p>
+                    <div class="card-3d bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-gelap text-white rounded-full flex items-center justify-center font-bold">3</span>
+                            <h4 class="font-bold text-xl text-gray-800">Menambah Huruf</h4>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                                <p class="text-xs font-bold uppercase text-green-700 mb-1 flex items-center gap-1"><span>✅</span> Betul</p>
+                                <p class="font-arabic text-2xl text-gelap">لَأَذْبَحَنَّهُ</p>
+                                <p class="text-sm text-green-800 mt-1">Makna: <span class="font-semibold italic">Pasti aku sembelihnya</span></p>
                             </div>
-                            <div class="bg-red-100 p-3 rounded text-red-900">
-                                <p class="text-xs font-bold uppercase text-red-700 mb-1">Salah (Lahn)</p>
-                                <p class="font-arabic text-xl">وَلَاء أَنتُم</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">(Tambah Hamzah, rosak makna)</span></p>
+                            <div class="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-100">
+                                <p class="text-xs font-bold uppercase text-red-700 mb-1 flex items-center gap-1"><span>❌</span> Salah</p>
+                                <p class="font-arabic text-2xl text-red-900">لَا أَذْبَحَنَّهُ</p>
+                                <p class="text-sm text-red-800 mt-1">Makna: <span class="font-semibold italic">TIDAK aku sembelihnya</span></p>
                             </div>
                         </div>
                     </div>
-                    <!-- Jali 4 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">4. Mengurang Huruf</h4>
-                        <div class="flex flex-col gap-2">
-                            <div class="bg-green-100 p-3 rounded text-green-900">
-                                <p class="text-xs font-bold uppercase text-green-700 mb-1">Betul (Asal)</p>
-                                <p class="font-arabic text-xl">لَم يَلِد</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">Tidak beranak</span></p>
-                            </div>
-                            <div class="bg-red-100 p-3 rounded text-red-900">
-                                <p class="text-xs font-bold uppercase text-red-700 mb-1">Salah (Lahn)</p>
-                                <p class="font-arabic text-xl">لَم يَلِ</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">(Hilang Dal, hilang makna)</span></p>
-                            </div>
+                    <div class="card-3d bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-8 h-8 bg-gelap text-white rounded-full flex items-center justify-center font-bold">4</span>
+                            <h4 class="font-bold text-xl text-gray-800">Mengurangkan Huruf</h4>
                         </div>
-                    </div>
-                    <!-- Jali 5 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 md:col-span-2">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">5. Menambah/Meninggalkan Sabdu</h4>
-                        <div class="flex flex-col md:flex-row gap-2">
-                            <div class="bg-green-100 p-3 rounded text-green-900 flex-1">
-                                <p class="text-xs font-bold uppercase text-green-700 mb-1">Betul (Asal)</p>
-                                <p class="font-arabic text-xl">إِيَّاكَ نَعبُدُ</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">Hanya kepada-Mu kami menyembah</span></p>
+                        <div class="flex flex-col gap-3">
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                                <p class="text-xs font-bold uppercase text-green-700 mb-1 flex items-center gap-1"><span>✅</span> Betul</p>
+                                <p class="font-arabic text-2xl text-gelap">وَلَا أَنتُمْ</p>
+                                <p class="text-sm text-green-800 mt-1">Makna: <span class="font-semibold italic">Dan BUKANLAH kamu</span></p>
                             </div>
-                            <div class="bg-red-100 p-3 rounded text-red-900 flex-1">
-                                <p class="text-xs font-bold uppercase text-red-700 mb-1">Salah (Lahn - Tiada Sabdu)</p>
-                                <p class="font-arabic text-xl">إِيَاكَ نَعبُدُ</p>
-                                <p class="text-sm">Bermaksud: <span class="italic">Kepada cahaya matahari kami menyembah</span></p>
+                            <div class="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-100">
+                                <p class="text-xs font-bold uppercase text-red-700 mb-1 flex items-center gap-1"><span>❌</span> Salah</p>
+                                <p class="font-arabic text-2xl text-red-900">وَلَ أَنتُمْ</p>
+                                <p class="text-sm text-red-800 mt-1">Makna: <span class="font-semibold italic">Dan BAGI kamu</span></p>
                             </div>
                         </div>
                     </div>
@@ -183,306 +277,273 @@
             </div>
 
             <!-- Lahn Khafi -->
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-t-4 border-orange-400">
-                <div class="bg-orange-50 p-6 border-b border-orange-100">
-                    <h3 class="text-2xl font-bold text-orange-700 flex items-center gap-2"><span class="text-3xl">🔍</span> Lahn Khafi (Kesalahan Tersembunyi)</h3>
-                    <p class="text-orange-700 mt-2">Kesalahan kecil pada hukum tajwid. Ia mencacatkan kesempurnaan bacaan, tetapi <b class="font-bold">TIDAK mengubah makna</b> ayat. Hukumnya <b>Makruh</b>.</p>
-                </div>
-                <div class="p-6 grid md:grid-cols-2 gap-6">
-                    <!-- Khafi 1 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">1. Meninggalkan Dengung (Ghunnah)</h4>
-                        <p class="font-arabic text-xl mb-2 text-center">مِن قَبْلِ</p>
-                        <div class="space-y-1 mt-3 border-t pt-3 border-gray-200">
-                            <p class="text-sm text-green-700">✅ <b class="font-semibold">Betul:</b> Dengung 2 harakat (Ikhfa')</p>
-                            <p class="text-sm text-red-600">❌ <b class="font-semibold">Lahn:</b> Dibaca jelas tanpa dengung</p>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-3 text-center italic">*Makna tidak berubah (Daripada sebelum)</p>
-                    </div>
-                    <!-- Khafi 2 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">2. Tidak Menyempurnakan Harakat Mad</h4>
-                        <p class="font-arabic text-xl mb-2 text-center">سَوَآءٌ</p>
-                        <div class="space-y-1 mt-3 border-t pt-3 border-gray-200">
-                            <p class="text-sm text-green-700">✅ <b class="font-semibold">Betul:</b> Panjang 4/5 harakat (Mad Wajib)</p>
-                            <p class="text-sm text-red-600">❌ <b class="font-semibold">Lahn:</b> Dibaca pendek 2 harakat sahaja</p>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-3 text-center italic">*Makna tidak berubah (Sama sahaja)</p>
-                    </div>
-                    <!-- Khafi 3 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">3. Tidak Menjaga Sifat Huruf (Tebal/Nipis)</h4>
-                        <p class="font-arabic text-xl mb-2 text-center">بَطَلَ</p>
-                        <div class="space-y-1 mt-3 border-t pt-3 border-gray-200">
-                            <p class="text-sm text-green-700">✅ <b class="font-semibold">Betul:</b> Huruf 'Ba' nipis, 'To' tebal</p>
-                            <p class="text-sm text-red-600">❌ <b class="font-semibold">Lahn:</b> Membaca 'Ba' dengan tebal</p>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-3 text-center italic">*Makna tidak berubah (Batal)</p>
-                    </div>
-                    <!-- Khafi 4 -->
-                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                        <h4 class="font-bold text-lg text-gray-800 mb-3">4. Melampau dalam Getaran (Takrir) Ra'</h4>
-                        <p class="font-arabic text-xl mb-2 text-center">الرَّحْمَٰنِ</p>
-                        <div class="space-y-1 mt-3 border-t pt-3 border-gray-200">
-                            <p class="text-sm text-green-700">✅ <b class="font-semibold">Betul:</b> Getaran Ra' yang sederhana</p>
-                            <p class="text-sm text-red-600">❌ <b class="font-semibold">Lahn:</b> Getaran terlalu banyak (Rrrrrrahman)</p>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-3 text-center italic">*Makna tidak berubah (Maha Pemurah)</p>
+            <div class="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border border-white relative mt-8">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 to-yellow-400"></div>
+                <div class="p-8 md:p-10 border-b border-gray-100 flex flex-col md:flex-row items-center gap-6 bg-gradient-to-br from-orange-50 to-white">
+                    <div class="w-20 h-20 bg-orange-100 rounded-2xl flex items-center justify-center text-4xl shadow-inner border border-orange-200 transform -rotate-3">🔍</div>
+                    <div>
+                        <h3 class="text-3xl font-extrabold text-orange-600 mb-2">Lahn Khafi (Kesalahan Tersembunyi)</h3>
+                        <p class="text-gray-700 text-lg">Kesalahan pada hukum tajwid. <b class="text-orange-700 bg-orange-50 px-2 rounded">TIDAK MENGUBAH MAKNA</b> ayat, tetapi mencacatkan kualiti bacaan. Hukumnya <b>Makruh</b>.</p>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- TAB 2: Maratib Qiraat -->
-        <section id="tab-maratib" class="tab-content">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-utama mb-4">Maratib Qiraat (Kelajuan Bacaan)</h2>
-                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 max-w-3xl mx-auto shadow-sm text-left">
-                    <h3 class="text-lg font-bold text-emerald-800 mb-2">📌 Apakah Maksud Maratib Qiraat?</h3>
-                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
-                        <b>Maratib</b> bermaksud tingkatan atau kelajuan. <b>Maratib Qiraat</b> ialah tingkatan kelajuan ketika membaca Al-Quran. Ulama menetapkan 4 tingkatan kelajuan utama ini sebagai panduan agar bacaan Al-Quran tetap terjaga hukum tajwidnya, tidak kira sama ada ia dibaca dengan lambat mahupun laju.
-                    </p>
-                    <p class="text-gray-600 mt-3 text-sm italic">
-                        *Klik butang <b>"Dengar Contoh"</b> di bawah untuk mendengar perbezaan kelajuan menggunakan keseluruhan Surah Al-Fatihah.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Visualisasi Kelajuan -->
-            <div class="relative max-w-4xl mx-auto">
-                <div class="hidden md:block absolute top-1/2 left-0 w-full h-2 bg-gray-200 rounded-full -translate-y-[80%]"></div>
                 
-                <div class="grid md:grid-cols-4 gap-4 relative z-10">
-                    
-                    <!-- 1. Tahqiq -->
-                    <div class="bg-white p-5 rounded-2xl shadow-lg border-2 border-blue-200 flex flex-col items-center text-center hover-scale justify-between">
-                        <div class="flex flex-col items-center">
-                            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-blue-700">Tahqiq</h3>
-                            <span class="font-arabic text-lg text-blue-500 mb-2">التحقيق</span>
-                            <div class="bg-blue-50 rounded px-2 py-1 text-sm font-bold text-blue-700 mb-2 w-full">Paling Perlahan</div>
-                            <p class="text-sm text-gray-600 mb-4">Membaca dengan lambat, jelas, dan memelihara semua hukum tajwid. Digunakan untuk <b>mengajar/belajar</b>.</p>
-                        </div>
-                        <div class="mt-auto w-full">
-                            <button onclick="mainkanAudio('audio-tahqiq', 0.65, this)" class="btn-audio flex items-center justify-center gap-2 w-full bg-blue-100 hover:bg-blue-200 text-blue-800 py-2 rounded-lg transition font-bold text-sm shadow-sm border border-blue-200">
-                                🔊 Dengar Contoh
-                            </button>
-                            <audio id="audio-tahqiq" src="https://server8.mp3quran.net/afs/001.mp3" preload="none"></audio>
+                <div class="p-6 md:p-10 grid md:grid-cols-2 lg:grid-cols-4 gap-6 bg-white">
+                    <div class="card-3d bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-xl mb-3">🎵</div>
+                        <h4 class="font-bold text-gray-800 mb-2">Tinggal Dengung</h4>
+                        <p class="font-arabic text-2xl mb-1 text-utama">مِن قَبْلِ</p>
+                        <p class="text-xs text-gray-500 mb-3 italic">(Dari sebelum)</p>
+                        <div class="bg-gray-50 rounded-xl p-3 w-full text-left text-sm border border-gray-100">
+                            <p class="text-green-700 mb-1">✅ <b>Betul:</b> Dibaca dengung</p>
+                            <p class="text-red-600">❌ <b>Salah:</b> Dibaca tanpa dengung</p>
                         </div>
                     </div>
-
-                    <!-- 2. Tartil -->
-                    <div class="bg-white p-5 rounded-2xl shadow-lg border-2 border-kedua flex flex-col items-center text-center hover-scale justify-between">
-                        <div class="flex flex-col items-center">
-                            <div class="w-16 h-16 bg-emerald-100 text-utama rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-utama">Tartil</h3>
-                            <span class="font-arabic text-lg text-kedua mb-2">الترتيل</span>
-                            <div class="bg-emerald-50 rounded px-2 py-1 text-sm font-bold text-utama mb-2 w-full">Perlahan & Tenang</div>
-                            <p class="text-sm text-gray-600 mb-4">Sederhana lambat dan tenang. Sesuai untuk tadabbur (memahami makna). Ini adalah <b>bacaan standard</b>.</p>
-                        </div>
-                        <div class="mt-auto w-full">
-                            <button onclick="mainkanAudio('audio-tartil', 1.0, this)" class="btn-audio flex items-center justify-center gap-2 w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 py-2 rounded-lg transition font-bold text-sm shadow-sm border border-emerald-200">
-                                🔊 Dengar Contoh
-                            </button>
-                            <audio id="audio-tartil" src="https://server8.mp3quran.net/afs/001.mp3" preload="none"></audio>
+                    <div class="card-3d bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-xl mb-3">📏</div>
+                        <h4 class="font-bold text-gray-800 mb-2">Harakat Mad</h4>
+                        <p class="font-arabic text-2xl mb-1 text-utama">سَوَآءٌ</p>
+                        <p class="text-xs text-gray-500 mb-3 italic">(Sama sahaja)</p>
+                        <div class="bg-gray-50 rounded-xl p-3 w-full text-left text-sm border border-gray-100">
+                            <p class="text-green-700 mb-1">✅ <b>Betul:</b> Dibaca 4/5 harakat</p>
+                            <p class="text-red-600">❌ <b>Salah:</b> Dibaca pendek</p>
                         </div>
                     </div>
-
-                    <!-- 3. Tadwir -->
-                    <div class="bg-white p-5 rounded-2xl shadow-lg border-2 border-aksen flex flex-col items-center text-center hover-scale justify-between">
-                        <div class="flex flex-col items-center">
-                            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-amber-600">Tadwir</h3>
-                            <span class="font-arabic text-lg text-amber-500 mb-2">التدوير</span>
-                            <div class="bg-amber-50 rounded px-2 py-1 text-sm font-bold text-amber-700 mb-2 w-full">Sederhana</div>
-                            <p class="text-sm text-gray-600 mb-4">Pertengahan antara kelajuan Tartil dan Hadr. Kelajuan biasa dibaca oleh imam dalam solat Tarawih.</p>
-                        </div>
-                        <div class="mt-auto w-full">
-                            <button onclick="mainkanAudio('audio-tadwir', 1.35, this)" class="btn-audio flex items-center justify-center gap-2 w-full bg-amber-100 hover:bg-amber-200 text-amber-800 py-2 rounded-lg transition font-bold text-sm shadow-sm border border-amber-200">
-                                🔊 Dengar Contoh
-                            </button>
-                            <audio id="audio-tadwir" src="https://server8.mp3quran.net/afs/001.mp3" preload="none"></audio>
+                    <div class="card-3d bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-xl mb-3">🗣️</div>
+                        <h4 class="font-bold text-gray-800 mb-2">Sifat Huruf</h4>
+                        <p class="font-arabic text-2xl mb-1 text-utama">بَطَلَ</p>
+                        <p class="text-xs text-gray-500 mb-3 italic">(Telah batal)</p>
+                        <div class="bg-gray-50 rounded-xl p-3 w-full text-left text-sm border border-gray-100">
+                            <p class="text-green-700 mb-1">✅ <b>Betul:</b> Ba dinipis, To ditebal</p>
+                            <p class="text-red-600">❌ <b>Salah:</b> Ba disebut tebal</p>
                         </div>
                     </div>
-
-                    <!-- 4. Hadr -->
-                    <div class="bg-white p-5 rounded-2xl shadow-lg border-2 border-purple-200 flex flex-col items-center text-center hover-scale justify-between">
-                        <div class="flex flex-col items-center">
-                            <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"></path></svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-purple-700">Hadr</h3>
-                            <span class="font-arabic text-lg text-purple-500 mb-2">الحدر</span>
-                            <div class="bg-purple-50 rounded px-2 py-1 text-sm font-bold text-purple-700 mb-2 w-full">Paling Laju</div>
-                            <p class="text-sm text-gray-600 mb-4">Bacaan yang laju tetapi masih memelihara hukum tajwid yang wajib (seperti dengung & mad). Biasa dibaca oleh hafiz untuk mengulang hafalan.</p>
-                        </div>
-                        <div class="mt-auto w-full">
-                            <button onclick="mainkanAudio('audio-hadr', 1.8, this)" class="btn-audio flex items-center justify-center gap-2 w-full bg-purple-100 hover:bg-purple-200 text-purple-800 py-2 rounded-lg transition font-bold text-sm shadow-sm border border-purple-200">
-                                🔊 Dengar Contoh
-                            </button>
-                            <audio id="audio-hadr" src="https://server8.mp3quran.net/afs/001.mp3" preload="none"></audio>
+                    <div class="card-3d bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-xl mb-3">👅</div>
+                        <h4 class="font-bold text-gray-800 mb-2">Takrir Ra'</h4>
+                        <p class="font-arabic text-2xl mb-1 text-utama">الرَّحْمَٰنِ</p>
+                        <p class="text-xs text-gray-500 mb-3 italic">(Maha Pemurah)</p>
+                        <div class="bg-gray-50 rounded-xl p-3 w-full text-left text-sm border border-gray-100">
+                            <p class="text-green-700 mb-1">✅ <b>Betul:</b> Getaran sederhana</p>
+                            <p class="text-red-600">❌ <b>Salah:</b> Getaran lidah melampau</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 3: Kuiz Minda (Kini Word Search) -->
+        <section id="tab-senario" class="tab-content">
+            <div class="max-w-3xl mx-auto bg-white/90 backdrop-blur-md rounded-[2rem] shadow-2xl overflow-hidden border-4 border-white relative">
+                
+                <div id="mula-senario-skrin" class="p-10 md:p-16 text-center">
+                    <div class="w-32 h-32 bg-gradient-to-br from-indigo-300 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg border-4 border-white animate-float">
+                        <span class="text-6xl">🕵️‍♂️</span>
+                    </div>
+                    <h2 class="text-4xl font-extrabold text-gelap mb-4">Misi 1: Detektif Lahn</h2>
+                    <p class="text-gray-600 mb-8 max-w-lg mx-auto text-lg">Uji ketajaman deria Tajwid kumpulan anda! Siasat <b>5 fail kes rawak</b> bacaan Al-Quran dan kenal pasti jenis kesalahannya. Masa akan direkodkan!</p>
+                    
+                    <div class="max-w-sm mx-auto mb-10 bg-gray-50/80 p-6 rounded-2xl border-2 border-gray-100 shadow-inner">
+                        <label for="nama-kumpulan-senario" class="block text-sm font-bold text-gray-700 mb-3 text-left uppercase tracking-wider">Nama Kumpulan (Ejen):</label>
+                        <input type="text" id="nama-kumpulan-senario" placeholder="Cth: Kumpulan Abu Bakar" class="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition text-lg font-semibold">
+                        <p id="amaran-nama-senario" class="text-red-500 text-sm mt-2 hidden text-left font-bold flex items-center gap-1"><span>⚠️</span> Sila daftar nama kumpulan dahulu!</p>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <button onclick="mulaSenario()" class="shadow-[0_4px_0_0_#3730a3] active:shadow-[0_0px_0_0_#3730a3] active:translate-y-1 transition-all bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-extrabold py-4 px-10 rounded-2xl text-xl w-full sm:w-auto flex items-center justify-center gap-3">
+                            🔎 Mulakan Siasatan (Masa Berjalan)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="permainan-senario-skrin" class="hidden flex-col p-6 md:p-10 bg-gray-50">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-extrabold text-indigo-700 flex items-center gap-2"><span>📁</span> Kes #<span id="nombor-soalan">1</span>/5</h3>
+                        <div class="flex gap-2 items-center">
+                            <div class="bg-gray-200 text-gray-700 font-bold px-3 py-1.5 rounded-lg text-xs" id="papar-masa-senario">⏱️ Masa Berjalan...</div>
+                            <div class="bg-indigo-100 text-indigo-800 font-extrabold px-4 py-2 rounded-xl shadow-inner text-sm" id="papar-skor-senario">Skor: 0</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 mb-6">
+                        <p id="teks-soalan" class="text-lg md:text-xl font-semibold text-gray-800 leading-relaxed"></p>
+                    </div>
+
+                    <div id="pilihan-jawapan" class="flex flex-col gap-3"></div>
+                </div>
+
+                <div id="keputusan-senario" class="hidden p-10 md:p-16 text-center">
+                    <div id="ikon-keputusan-senario" class="text-7xl mb-6 animate-bounce">🎖️</div>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-gelap mb-2">Siasatan Selesai, <span id="papar-nama-keputusan-senario" class="text-indigo-600">Kumpulan</span>!</h2>
+                    
+                    <div class="flex flex-wrap justify-center gap-4 my-8">
+                        <div class="bg-gradient-to-b from-indigo-50 to-white border-2 border-indigo-100 rounded-3xl p-6 w-40 shadow-lg relative">
+                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Markah Akhir</div>
+                            <div class="text-5xl font-black text-indigo-600 drop-shadow-sm"><span id="skor-akhir-senario">0</span><span class="text-2xl text-gray-400">/5</span></div>
+                        </div>
+                        <div class="bg-gradient-to-b from-emerald-50 to-white border-2 border-emerald-100 rounded-3xl p-6 w-40 shadow-lg relative">
+                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Masa Diambil</div>
+                            <div class="text-2xl font-black text-emerald-600 drop-shadow-sm mt-3" id="papar-masa-akhir-senario">0m 0s</div>
+                        </div>
+                    </div>
+
+                    <p id="mesej-keputusan-senario" class="text-xl font-bold text-gray-700 mb-10"></p>
+                    
+                    <div class="flex flex-col gap-4 justify-center">
+                        <button onclick="teruskanKeWordSearch()" class="shadow-[0_6px_0_0_#065f46] active:shadow-[0_2px_0_0_#065f46] active:translate-y-1 bg-gradient-to-r from-emerald-500 to-utama hover:from-emerald-600 hover:to-green-700 text-white font-extrabold py-5 px-8 rounded-2xl transition-all text-xl flex items-center justify-center gap-2 w-full animate-pulse">
+                            🚀 Seterusnya: Misi Word Search
+                        </button>
+                        <button onclick="setSemulaSenario()" class="text-gray-500 font-bold py-2 hover:text-gray-700 underline text-sm">
+                            Main Semula Misi 1
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="tab-kuiz" class="tab-content">
-            <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 relative">
+            <div class="max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-[2rem] shadow-2xl overflow-hidden border-4 border-white relative">
                 
-                <!-- Skrin Permulaan Word Search -->
-                <div id="mula-kuiz-skrin" class="p-8 md:p-10 text-center">
-                    <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span class="text-5xl">🔍</span>
+                <div id="mula-kuiz-skrin" class="p-10 md:p-16 text-center">
+                    <div class="w-32 h-32 bg-gradient-to-br from-yellow-300 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg border-4 border-white animate-float">
+                        <span class="text-6xl">🧩</span>
                     </div>
-                    <h2 class="text-3xl font-bold text-utama mb-4">Cabaran Cari Perkataan (Sukar)</h2>
-                    <p class="text-gray-600 mb-6 max-w-lg mx-auto">Uji ketajaman mata anda! Pilih topik yang anda ingin cabar. Setiap topik mengandungi 10 perkataan tersembunyi melintang, menegak, pepenjuru dan <b class="text-red-500">terbalik!</b></p>
+                    <h2 class="text-4xl font-extrabold text-gelap mb-4">Misi 2: Cari Perkataan</h2>
+                    <p class="text-gray-600 mb-8 max-w-lg mx-auto text-lg">Cari <b>15 perkataan tersembunyi</b> secara melintang, menegak, pepenjuru atau terbalik dengan sepantas yang mungkin!</p>
                     
-                    <div class="max-w-sm mx-auto mb-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
-                        <label for="nama-pelajar" class="block text-sm font-bold text-gray-700 mb-2 text-left">Nama Penuh Pelajar:</label>
-                        <input type="text" id="nama-pelajar" placeholder="Cth: Ahmad bin Abu" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-utama focus:border-transparent transition">
-                        <p id="amaran-nama" class="text-red-500 text-sm mt-2 hidden text-left">Sila masukkan nama anda sebelum mula.</p>
+                    <div class="max-w-sm mx-auto mb-10 bg-gray-50/80 p-6 rounded-2xl border-2 border-gray-100 shadow-inner">
+                        <label for="nama-kumpulan-ws" class="block text-sm font-bold text-gray-700 mb-3 text-left uppercase tracking-wider">Nama Kumpulan (Skuad):</label>
+                        <input type="text" id="nama-kumpulan-ws" placeholder="Cth: Kumpulan Abu Bakar" class="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-emerald-100 focus:border-utama transition text-lg font-semibold">
+                        <p id="amaran-nama-ws" class="text-red-500 text-sm mt-2 hidden text-left font-bold flex items-center gap-1"><span>⚠️</span> Sila isi nama kumpulan!</p>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button onclick="mulaWordSearch('lahn')" class="bg-utama hover:bg-emerald-800 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                            Cabaran Lahn (10 Kata)
-                        </button>
-                        <button onclick="mulaWordSearch('maratib')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                            Cabaran Maratib (10 Kata)
+                    <div class="flex justify-center">
+                        <button onclick="mulaWordSearch()" class="shadow-[0_4px_0_0_#047857] active:shadow-[0_0px_0_0_#047857] active:translate-y-1 transition-all bg-gradient-to-r from-utama to-emerald-500 text-white font-extrabold py-4 px-10 rounded-2xl text-xl w-full sm:w-auto flex items-center justify-center gap-3">
+                            🎮 Mulakan Misi 2 (Masa Berjalan)
                         </button>
                     </div>
                 </div>
 
-                <!-- Skrin Permainan Word Search -->
-                <div id="permainan-ws-skrin" class="hidden flex-col md:flex-row p-6 md:p-8 gap-8">
-                    <!-- Bahagian Papan Grid -->
+                <div id="permainan-ws-skrin" class="hidden flex-col md:flex-row p-6 md:p-8 gap-8 bg-gray-50">
                     <div class="flex-1 flex flex-col items-center w-full">
-                        <div class="w-full flex justify-between items-center mb-4">
-                            <h3 id="tajuk-tahap" class="text-xl md:text-2xl font-bold text-utama">Topik: Lahn</h3>
-                            <span class="bg-emerald-100 text-utama font-bold px-4 py-1 rounded-full text-sm shadow-sm" id="papar-skor-ws">Skor: 0 / 10</span>
+                        <div class="w-full flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 id="tajuk-tahap" class="text-xl md:text-2xl font-extrabold text-utama flex items-center gap-2"><span>🎯</span> Cari Perkataan</h3>
+                            <div class="flex gap-2">
+                                <div class="bg-gray-200 text-gray-700 font-bold px-3 py-2 rounded-xl text-sm" id="papar-masa-ws">⏱️ Masa Berjalan...</div>
+                                <div class="bg-amber-100 text-amber-700 font-extrabold px-5 py-2 rounded-xl border-2 border-amber-200 shadow-inner" id="papar-skor-ws">Skor: 0 / 15</div>
+                            </div>
                         </div>
                         
-                        <div class="bg-blue-50 text-blue-800 text-xs md:text-sm p-3 rounded-lg mb-4 w-full text-center border border-blue-200 shadow-sm">
-                            <span class="font-bold">Cara Main:</span> <b>Klik huruf PERTAMA</b>, kemudian <b>Klik huruf TERAKHIR</b> perkataan.
+                        <div class="bg-indigo-50 text-indigo-800 text-sm p-4 rounded-xl mb-6 w-full text-center border-2 border-indigo-100 flex items-center justify-center gap-2 font-medium">
+                            <span>👆</span> <b>Cara Main:</b> Klik huruf PERTAMA, kemudian klik huruf TERAKHIR.
                         </div>
 
-                        <!-- Grid -->
-                        <div id="grid-container" class="grid grid-cols-12 gap-1 md:gap-1.5 w-full max-w-md mx-auto aspect-square bg-gray-100 p-2 md:p-3 rounded-xl border-2 border-gray-300 shadow-inner">
-                            <!-- Huruf akan dijana di sini melalui JavaScript -->
-                        </div>
+                        <div id="grid-container" class="grid grid-cols-12 gap-1.5 md:gap-2 w-full max-w-[450px] mx-auto aspect-square bg-gray-200 p-3 md:p-4 rounded-[1.5rem] shadow-inner"></div>
                     </div>
 
-                    <!-- Panel Sisi Kanan (Senarai Perkataan & Butang) -->
-                    <div class="w-full md:w-64 flex flex-col">
-                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 flex-1 shadow-sm">
-                            <h4 class="font-bold text-gray-800 border-b border-gray-300 pb-2 mb-3">Senarai Perkataan</h4>
-                            <ul id="senarai-perkataan" class="grid grid-cols-2 md:grid-cols-1 gap-x-4 gap-y-2 text-sm font-semibold text-gray-600">
-                                <!-- Perkataan dijana di sini -->
-                            </ul>
+                    <div class="w-full md:w-72 flex flex-col gap-4">
+                        <div class="bg-white rounded-[1.5rem] p-6 border border-gray-200 shadow-sm flex-1">
+                            <h4 class="font-extrabold text-gray-800 text-lg mb-4 flex items-center gap-2 border-b-2 border-gray-100 pb-3"><span>📋</span> Senarai Buruan</h4>
+                            <ul id="senarai-perkataan" class="grid grid-cols-2 md:grid-cols-1 gap-x-4 gap-y-3 text-sm font-bold text-gray-500"></ul>
                         </div>
-                        
-                        <div class="mt-4 space-y-3">
-                            <button id="btn-seterusnya" onclick="seterusnyaWordSearch()" class="w-full bg-utama hover:bg-emerald-800 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-md hidden flex items-center justify-center gap-2">
-                                Seterusnya <span class="text-xl">👉</span>
-                            </button>
-                            <button id="btn-tamat-awal" onclick="tamatWordSearch()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 px-4 rounded-xl transition-all shadow-sm text-sm border border-red-200">
-                                Berputus Asa / Tamat Awal
-                            </button>
-                        </div>
+                        <button onclick="tamatWordSearch()" class="shadow-[0_4px_0_0_#991b1b] active:shadow-[0_0px_0_0_#991b1b] active:translate-y-1 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+                            🏳️ Putus Asa (Tamat)
+                        </button>
                     </div>
                 </div>
 
-                <!-- Skrin Keputusan -->
-                <div id="keputusan-kuiz" class="hidden p-10 text-center">
-                    <div id="ikon-keputusan" class="text-6xl mb-4">🏆</div>
-                    <h2 class="text-3xl font-bold text-utama mb-2">Tahniah, <span id="papar-nama-keputusan">Pelajar</span>!</h2>
-                    <p class="text-xl text-gray-600 mb-6">Topik: <span id="papar-topik-keputusan" class="font-bold">Lahn</span> | Kata Kunci Dijumpai:</p>
-                    <div class="text-6xl font-extrabold text-aksen mb-8"><span id="skor-akhir">0</span> / 10</div>
-                    <p id="mesej-keputusan" class="text-lg font-semibold text-gray-700 mb-8">Hebat! Anda memahami topik ini dengan cemerlang.</p>
+                <div id="keputusan-kuiz" class="hidden p-10 md:p-16 text-center">
+                    <div id="ikon-keputusan" class="text-7xl mb-6 animate-bounce">🏆</div>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-gelap mb-2">Hebat, Skuad <span id="papar-nama-keputusan" class="text-utama">Pelajar</span>!</h2>
+                    
+                    <div class="flex flex-wrap justify-center gap-4 my-8">
+                        <div class="bg-gradient-to-b from-amber-50 to-white border-2 border-amber-100 rounded-3xl p-6 w-40 shadow-lg relative">
+                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-amber-400 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Markah Akhir</div>
+                            <div class="text-5xl font-black text-amber-500 drop-shadow-sm"><span id="skor-akhir">0</span><span class="text-2xl text-gray-400">/15</span></div>
+                        </div>
+                        <div class="bg-gradient-to-b from-emerald-50 to-white border-2 border-emerald-100 rounded-3xl p-6 w-40 shadow-lg relative">
+                            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Masa Diambil</div>
+                            <div class="text-2xl font-black text-emerald-600 drop-shadow-sm mt-3" id="papar-masa-akhir-ws">0m 0s</div>
+                        </div>
+                    </div>
+
+                    <p id="mesej-keputusan" class="text-xl font-bold text-gray-700 mb-10"></p>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button onclick="muatTurunKeputusanIndividu()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full transition-all shadow-md flex items-center justify-center gap-2">
-                            <span>📊</span> Muat Turun (Excel)
-                        </button>
-                        <button onclick="setSemulaKuiz()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-full transition-all shadow-md">
-                            Main Semula
+                        <button onclick="setSemulaKuiz()" class="shadow-[0_6px_0_0_#4b5563] active:shadow-[0_2px_0_0_#4b5563] active:translate-y-1 bg-gray-600 hover:bg-gray-700 text-white font-extrabold py-4 px-8 rounded-2xl transition-all flex items-center justify-center gap-2">
+                            🔄 Main Semula Misi 2
                         </button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 4: Tanya Ustaz 'Akashah AI -->
         <section id="tab-chat" class="tab-content">
-            <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col h-[600px]">
-                <!-- Header Chat -->
-                <div class="bg-utama text-white p-4 flex items-center gap-4">
-                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl border-2 border-emerald-300">👳‍♂️</div>
-                    <div>
-                        <h3 class="font-bold text-lg">Ustaz 'Akashah AI</h3>
-                        <p class="text-xs text-emerald-200">Pembantu maya tajwid anda</p>
+            <div class="max-w-3xl mx-auto bg-white/90 backdrop-blur-md rounded-[2rem] shadow-2xl overflow-hidden border-4 border-white flex flex-col h-[650px]">
+                <div class="bg-gradient-to-r from-utama to-emerald-500 text-white p-5 flex items-center gap-4 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 opacity-10 text-6xl -mr-4 -mt-4">🤖</div>
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-3xl border-4 border-emerald-300 shadow-md z-10 relative">
+                        👳‍♂️
+                        <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div class="z-10">
+                        <h3 class="font-extrabold text-xl">Ustaz 'Akashah AI</h3>
+                        <p class="text-sm text-emerald-100 font-medium">Pembantu maya tajwid anda (Tanya Klu Detektif)</p>
                     </div>
                 </div>
 
-                <!-- Ruang Mesej -->
-                <div id="chatbox" class="flex-1 p-4 flex flex-col gap-4 bg-gray-50">
+                <div id="chatbox" class="flex-1 p-6 flex flex-col gap-6 bg-gray-50/50 relative">
                     <div class="flex gap-3 max-w-[85%]">
-                        <div class="w-8 h-8 rounded-full bg-utama flex items-center justify-center text-white text-sm flex-shrink-0">👳‍♂️</div>
-                        <div class="msg-ai p-3 text-sm shadow-sm">
-                            Assalamualaikum! Saya Ustaz 'Akashah AI. Ada apa-apa soalan mengenai tajuk Lahn (kesalahan bacaan) atau Maratib Qiraat (kelajuan bacaan)? Tanya sahaja, insya-Allah ustaz cuba bantu.
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-utama to-emerald-500 flex items-center justify-center text-white text-lg flex-shrink-0 shadow-md">👳‍♂️</div>
+                        <div class="msg-ai p-4 text-sm md:text-base shadow-sm chat-bubble">
+                            Assalamualaikum kumpulan detektif! Ustaz di sini. Kalau kamu tersangkut masa siasat Ujian Detektif Lahn tu, tanya je ustaz kat sini, ustaz akan bagi clue. Taip kata kunci atau ayat arab dari soalan tu.
                         </div>
                     </div>
                 </div>
 
-                <!-- Input Mesej -->
-                <div class="p-4 bg-white border-t border-gray-200 flex gap-2">
-                    <input type="text" id="input-chat" placeholder="Tanya soalan di sini..." class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-utama" onkeypress="handleEnter(event)">
-                    <button onclick="hantarMesej()" class="bg-utama hover:bg-emerald-800 text-white px-5 py-2 rounded-full font-bold transition-colors">
-                        Hantar
+                <div class="p-4 bg-white border-t border-gray-100 flex gap-3">
+                    <input type="text" id="input-chat" placeholder="Taip soalan atau kata kunci (cth: bot laju, عَصَى)..." class="flex-1 px-6 py-3 bg-gray-100 border-none rounded-full focus:outline-none focus:ring-4 focus:ring-emerald-100 transition text-gray-700 font-medium" onkeypress="handleEnter(event)">
+                    <button onclick="hantarMesej()" class="shadow-[0_4px_0_0_#047857] active:shadow-[0_0px_0_0_#047857] active:translate-y-1 bg-utama hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-bold transition-all flex items-center gap-2">
+                        Hantar <span>✈️</span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 5: Rekod Live (Guru) -->
         <section id="tab-guru" class="tab-content">
-            <div class="max-w-4xl mx-auto">
-                <div class="flex justify-between items-end mb-6">
-                    <div>
-                        <h2 class="text-3xl font-bold text-utama mb-2">Rekod Keputusan (Live)</h2>
-                        <p class="text-gray-600">Jadual ini memaparkan markah pelajar secara <i>real-time</i>. Biarkan tab ini terbuka.</p>
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-white/80 backdrop-blur-sm rounded-[2rem] p-8 md:p-10 shadow-xl border border-white">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                        <div>
+                            <h2 class="text-3xl font-extrabold text-gelap mb-2 flex items-center gap-3"><span>📡</span> Dashboard Guru (Live)</h2>
+                            <p class="text-gray-600 font-medium">Jadual kemas kini automatik. Biarkan tab ini terbuka semasa di dalam kelas.</p>
+                        </div>
+                        <button onclick="muatTurunSemuaRekod()" class="shadow-[0_4px_0_0_#065f46] active:shadow-[0_0px_0_0_#065f46] active:translate-y-1 bg-green-600 hover:bg-green-700 text-white font-extrabold py-3 px-6 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap">
+                            <span>📥</span> Ekstrak ke Excel
+                        </button>
                     </div>
-                    <button onclick="muatTurunSemuaRekod()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2 text-sm">
-                        <span>📊</span> Muat Turun Semua (Excel)
-                    </button>
-                </div>
 
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-emerald-50 text-utama border-b-2 border-emerald-200">
-                                    <th class="py-3 px-4 font-bold">Bil</th>
-                                    <th class="py-3 px-4 font-bold">Nama Pelajar</th>
-                                    <th class="py-3 px-4 font-bold">Topik</th>
-                                    <th class="py-3 px-4 font-bold text-center">Skor ( / 10 )</th>
-                                    <th class="py-3 px-4 font-bold">Tarikh & Masa</th>
-                                </tr>
-                            </thead>
-                            <tbody id="jadual-rekod-body">
-                                <tr id="baris-kosong">
-                                    <td colspan="5" class="py-8 text-center text-gray-500 italic">Belum ada rekod pelajar mencari perkataan.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="bg-gray-50 rounded-2xl shadow-inner overflow-hidden border border-gray-200">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gradient-to-r from-emerald-100 to-teal-50 text-gelap border-b-2 border-emerald-200 text-sm uppercase tracking-wide">
+                                        <th class="py-4 px-4 font-extrabold">#</th>
+                                        <th class="py-4 px-4 font-extrabold">Kumpulan</th>
+                                        <th class="py-4 px-4 font-extrabold">Misi</th>
+                                        <th class="py-4 px-4 font-extrabold text-center">Skor</th>
+                                        <th class="py-4 px-4 font-extrabold text-center">Masa</th>
+                                        <th class="py-4 px-4 font-extrabold">Tarikh</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="jadual-rekod-body">
+                                    <tr id="baris-kosong">
+                                        <td colspan="6" class="py-12 text-center text-gray-400 font-medium text-lg">
+                                            <span class="text-4xl block mb-3">📭</span> Belum ada data diterima.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -490,167 +551,275 @@
 
     </main>
 
-    <script>
-        /* FUNGSI KAWALAN AUDIO MARATIB */
-        function mainkanAudio(idAudio, kelajuan, butangDitekan) {
-            document.querySelectorAll('audio').forEach(aud => {
-                aud.pause();
-                aud.currentTime = 0;
-            });
-            
-            document.querySelectorAll('.btn-audio').forEach(btn => {
-                btn.innerHTML = '🔊 Dengar Contoh';
-                btn.classList.remove('ring-2', 'ring-offset-2', 'ring-gray-400');
-            });
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            const audioTerkini = document.getElementById(idAudio);
-            audioTerkini.playbackRate = kelajuan;
-            audioTerkini.play();
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'maharat-app-db';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        
+        let db, auth, userId;
+        let pangkalanDataAktif = false;
 
-            butangDitekan.innerHTML = '🎶 Sedang Dimainkan...';
-            butangDitekan.classList.add('ring-2', 'ring-offset-2', 'ring-gray-400');
+        window.rekodKeseluruhan = JSON.parse(localStorage.getItem('rekod_kuiz_maharat') || '[]');
 
-            audioTerkini.onended = function() {
-                butangDitekan.innerHTML = '🔊 Dengar Contoh';
-                butangDitekan.classList.remove('ring-2', 'ring-offset-2', 'ring-gray-400');
-            };
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                signInAnonymously(auth).then(() => {
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            userId = user.uid; pangkalanDataAktif = true; dengarRekodLive();
+                        }
+                    });
+                }).catch((e) => { console.warn("Mod Offline digunakan."); });
+            } catch(e) { console.warn("Mod Offline digunakan."); }
         }
 
-        /* FUNGSI KAWALAN TAB */
-        function bukaTab(idTab) {
-            document.querySelectorAll('audio').forEach(aud => aud.pause());
-            
-            document.querySelectorAll('.tab-content').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('active');
-            });
+        setTimeout(() => window.kemaskiniJadualGuru(), 500);
 
+        function dengarRekodLive() {
+            if(!pangkalanDataAktif) return;
+            const rekodRef = collection(db, 'rekod_maharat_v2'); 
+            const q = query(rekodRef); 
+            
+            try {
+                onSnapshot(q, (snapshot) => {
+                    let rekodAwan = [];
+                    snapshot.forEach((doc) => rekodAwan.push(doc.data()));
+                    rekodAwan.sort((a, b) => a.timestamp - b.timestamp);
+                    window.rekodKeseluruhan = rekodAwan;
+                    localStorage.setItem('rekod_kuiz_maharat', JSON.stringify(window.rekodKeseluruhan));
+                    window.kemaskiniJadualGuru();
+                }, (error) => {
+                    console.warn("Gagal baca awan. Menukar ke mod Local Storage.");
+                    pangkalanDataAktif = false; 
+                });
+            } catch (err) {}
+        }
+
+        window.simpanKeAwan = async function(rekod) {
+            if(!pangkalanDataAktif) {
+                window.rekodKeseluruhan.push(rekod);
+                localStorage.setItem('rekod_kuiz_maharat', JSON.stringify(window.rekodKeseluruhan));
+                window.kemaskiniJadualGuru(); return;
+            }
+            try {
+                const rekodRef = collection(db, 'rekod_maharat_v2');
+                await addDoc(rekodRef, rekod);
+            } catch (e) {
+                pangkalanDataAktif = false; 
+                window.rekodKeseluruhan.push(rekod);
+                localStorage.setItem('rekod_kuiz_maharat', JSON.stringify(window.rekodKeseluruhan));
+                window.kemaskiniJadualGuru();
+            }
+        }
+    </script>
+
+    <script>
+        // VARIABLE GLOBAL KUMPULAN & MASA
+        let namaKumpulanGlobal = "";
+        
+        function bukaTab(idTab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(idTab).classList.add('active');
             document.getElementById('btn-' + idTab).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* LOGIK PERMAINAN WORD SEARCH */
-        const wordsLahn = ["JALI", "KHAFI", "HARAM", "MAKRUH", "BARIS", "HURUF", "SABDU", "MAKNA", "DENGUNG", "TAKRIR"];
-        const wordsMaratib = ["TAHQIQ", "TARTIL", "TADWIR", "HADR", "CEPAT", "LAMBAT", "TENANG", "BACAAN", "QIRAAT", "TAJWID"];
-        
-        const gridSize = 12;
-        let currentGrid = [];
-        let currentWords = [];
-        let foundWordsInLevel = [];
-        let modePermainan = ''; // Menyimpan pilihan 'lahn' atau 'maratib'
-        
-        let skor = 0;
-        let namaPelajarSemasa = "";
-        let selPertama = null;
+        /* --- DETEKTIF LAHN --- */
+        const bankSoalanSenario = [
+            { soalan: "Semasa tasmik, kumpulan anda terdengar Ahmad membaca firman Allah (أَنعَمتَ) dengan sebutan (أَنعَمتُ). Sebagai detektif, klasifikasikan fail kes ini.", pilihan: ["Lahn Jali (Menukar Baris)", "Lahn Khafi (Menukar Baris)", "Lahn Jali (Menambah Huruf)", "Lahn Khafi (Sifat Huruf)"], jawapanBetul: 0 },
+            { soalan: "Fail Kes #202: Fatimah didapati bersalah kerana membaca kalimah (عَصَى) sebagai (عَسَى). Apakah hukum perbuatan ini jika dilakukan secara sengaja?", pilihan: ["Makruh", "Harus", "Haram", "Sunat"], jawapanBetul: 2 },
+            { soalan: "Fail Kes #303: Abu membaca (وَلَا الضَّالِّينَ) dengan memendekkan bacaan kepada 2 harakat sahaja (sepatutnya mad lazim). Apakah klasifikasi kesalahan beliau?", pilihan: ["Lahn Jali", "Lahn Khafi", "Lahn Nyata", "Lahn Berat"], jawapanBetul: 1 },
+            { soalan: "Suspek membaca kalimah (مِن قَبْلِ) dengan terang di bibir tanpa membunyikan dengung Ikhfa' di hidung. Suspek dituduh melakukan kesalahan Lahn Khafi. Apakah hukum kesalahannya?", pilihan: ["Haram", "Sunat", "Mubah", "Makruh"], jawapanBetul: 3 },
+            { soalan: "Pita bukti: Siti membaca kalimah (لَأَذْبَحَنَّهُ) menjadi (لَا أَذْبَحَنَّهُ). Kes ini sangat berat. Apakah nama spesifik bagi kesalahan (jenayah) yang dilakukannya?", pilihan: ["Lahn Jali (Menambah Huruf)", "Lahn Khafi (Menambah Huruf)", "Lahn Jali (Mengurang Huruf)", "Lahn Khafi (Menukar Huruf)"], jawapanBetul: 0 },
+            { soalan: "Seorang pembaca telah melajukan sebutan (وَلَا أَنتُمْ) menjadi (وَلَ أَنتُمْ). Sebagai detektif tajwid, di bawah fail apakah anda akan mendaftarkan kes ini?", pilihan: ["Lahn Khafi (Mengurang Huruf)", "Lahn Jali (Mengurang Huruf)", "Lahn Jali (Menukar Baris)", "Lahn Khafi (Dengung)"], jawapanBetul: 1 },
+            { soalan: "🧩 Teka-teki Detektif: 'Jika kamu berani menukar, menambah, atau mengurangkan hurufku, ketahuilah bahawa makna ayat Tuhan akan rosak. Hukumku adalah Haram.' Siapakah saya?", pilihan: ["Lahn Khafi", "Lahn Jali", "Maratib Qiraat", "Hukum Tajwid"], jawapanBetul: 1 },
+            { soalan: "🧩 Teka-teki Detektif: 'Lidah suspek sering bergetar melampau ketika menyebutku, bagaikan enjin bot laju. Walau makna ayat selamat, kualitinya tetap tercemar.' Kes apakah ini?", pilihan: ["Lahn Jali (Tukar Huruf)", "Lahn Khafi (Takrir Ra')", "Lahn Khafi (Dengung)", "Lahn Jali (Sabdu)"], jawapanBetul: 1 },
+            { soalan: "🧩 Teka-teki Detektif: 'Saya bijak bersembunyi di balik hukum tajwid. Orang awam mungkin tak perasan, tapi Detektif Tajwid pasti menangkap saya. Siapakah saya?'", pilihan: ["Lahn Terang", "Lahn Jali", "Lahn Nyata", "Lahn Khafi"], jawapanBetul: 3 },
+            { soalan: "🧩 Teka-teki Detektif: 'Saya berlaku bila kamu tidak adil pada bunyi huruf. Yang patut tebal dinipiskan, yang patut nipis ditebalkan. Di rak manakah fail kes saya diletakkan?'", pilihan: ["Lahn Jali (Tukar Baris)", "Lahn Khafi (Sifat Huruf)", "Lahn Khafi (Tinggal Mad)", "Lahn Jali (Kurang Huruf)"], jawapanBetul: 1 }
+        ];
 
-        let rekodKeseluruhan = [];
+        let soalanSesiIni = [];
+        let indeksSoalanSemasa = 0;
+        let skorSenario = 0;
+        let masaMulaSenario = 0;
+        let masaTamatSenario = 0;
+        let stringMasaSenario = "";
 
-        const uiSkrinMula = document.getElementById('mula-kuiz-skrin');
-        const uiSkrinPermainan = document.getElementById('permainan-ws-skrin');
-        const uiSkrinKeputusan = document.getElementById('keputusan-kuiz');
-        const amaranNama = document.getElementById('amaran-nama');
+        function mulaSenario() {
+            const inputNama = document.getElementById('nama-kumpulan-senario').value.trim();
+            if(inputNama === "") { document.getElementById('amaran-nama-senario').classList.remove('hidden'); return; }
+            
+            document.getElementById('amaran-nama-senario').classList.add('hidden');
+            namaKumpulanGlobal = inputNama;
 
-        function mulaWordSearch(mode) {
-            const inputNama = document.getElementById('nama-pelajar').value.trim();
-            if(inputNama === "") {
-                amaranNama.classList.remove('hidden');
-                return;
-            }
+            soalanSesiIni = [...bankSoalanSenario].sort(() => 0.5 - Math.random()).slice(0, 5);
+            indeksSoalanSemasa = 0; skorSenario = 0; masaMulaSenario = Date.now();
+
+            document.getElementById('mula-senario-skrin').classList.add('hidden');
+            document.getElementById('keputusan-senario').classList.add('hidden');
+            document.getElementById('permainan-senario-skrin').classList.remove('hidden');
+            document.getElementById('permainan-senario-skrin').classList.add('flex');
             
-            amaranNama.classList.add('hidden');
-            namaPelajarSemasa = inputNama;
-            modePermainan = mode;
-            
-            uiSkrinMula.classList.add('hidden');
-            uiSkrinPermainan.classList.remove('hidden');
-            uiSkrinPermainan.classList.add('flex');
-            
-            skor = 0;
-            kemaskiniSkorUI();
-            binaTahap();
+            paparSoalanSenario();
         }
 
-        function binaTahap() {
-            selPertama = null;
-            document.getElementById('btn-seterusnya').classList.add('hidden');
-            document.getElementById('btn-tamat-awal').classList.remove('hidden');
-            foundWordsInLevel = [];
+        function paparSoalanSenario() {
+            const soalan = soalanSesiIni[indeksSoalanSemasa];
+            document.getElementById('nombor-soalan').innerText = indeksSoalanSemasa + 1;
+            document.getElementById('papar-skor-senario').innerText = `Skor: ${skorSenario}`;
+            document.getElementById('teks-soalan').innerText = soalan.soalan;
+
+            const bekas = document.getElementById('pilihan-jawapan');
+            bekas.innerHTML = '';
+
+            soalan.pilihan.forEach((teks, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 font-semibold text-gray-700 transition-all active:scale-[0.98]";
+                btn.innerText = teks;
+                btn.onclick = () => pilihJawapanSenario(idx, btn);
+                bekas.appendChild(btn);
+            });
+        }
+
+        function pilihJawapanSenario(indeks, btnEl) {
+            const soalan = soalanSesiIni[indeksSoalanSemasa];
+            const butang = document.getElementById('pilihan-jawapan').children;
             
-            if (modePermainan === 'lahn') {
-                document.getElementById('tajuk-tahap').innerText = "Topik: Lahn Jali & Khafi";
-                currentWords = [...wordsLahn];
+            Array.from(butang).forEach(b => { 
+                b.disabled = true; b.classList.add('opacity-80', 'cursor-not-allowed'); 
+                b.classList.remove('hover:border-indigo-400', 'hover:bg-indigo-50');
+            });
+
+            if (indeks === soalan.jawapanBetul) {
+                btnEl.classList.replace('border-gray-200', 'border-green-500');
+                btnEl.classList.add('bg-green-100', 'text-green-800');
+                btnEl.innerHTML += ' <span class="float-right">✅ Betul!</span>'; skorSenario++;
             } else {
-                document.getElementById('tajuk-tahap').innerText = "Topik: Maratib Qiraat";
-                currentWords = [...wordsMaratib];
+                btnEl.classList.replace('border-gray-200', 'border-red-500');
+                btnEl.classList.add('bg-red-100', 'text-red-800');
+                btnEl.innerHTML += ' <span class="float-right">❌ Salah</span>';
+                const btnBetul = butang[soalan.jawapanBetul];
+                btnBetul.classList.replace('border-gray-200', 'border-green-500');
+                btnBetul.classList.add('bg-green-50', 'text-green-800', 'border-2');
+                btnBetul.innerHTML += ' <span class="float-right">✅ Jawapan Sebenar</span>';
             }
-            
-            currentGrid = janaGrid(currentWords, gridSize);
-            lukisGrid();
-            lukisSenaraiPerkataan();
+
+            document.getElementById('papar-skor-senario').innerText = `Skor: ${skorSenario}`;
+
+            setTimeout(() => {
+                indeksSoalanSemasa++;
+                if (indeksSoalanSemasa < soalanSesiIni.length) paparSoalanSenario();
+                else tamatSenario();
+            }, 1800);
         }
 
-        function janaGrid(senaraiPerkataan, saiz) {
-            let grid = Array(saiz).fill(null).map(() => Array(saiz).fill(''));
-            const arah = [
-                [0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [-1, -1], [-1, 1], [1, -1] 
-            ];
+        function tamatSenario() {
+            masaTamatSenario = Date.now();
+            const durasiSaat = Math.floor((masaTamatSenario - masaMulaSenario) / 1000);
+            stringMasaSenario = `${Math.floor(durasiSaat/60)}m ${durasiSaat%60}s`;
 
-            for (let perkataan of senaraiPerkataan) {
-                let berjayaLetak = false;
-                let cubaan = 0;
-                
-                while (!berjayaLetak && cubaan < 500) {
+            document.getElementById('permainan-senario-skrin').classList.add('hidden');
+            document.getElementById('permainan-senario-skrin').classList.remove('flex');
+            document.getElementById('keputusan-senario').classList.remove('hidden');
+
+            document.getElementById('skor-akhir-senario').innerText = skorSenario;
+            document.getElementById('papar-nama-keputusan-senario').innerText = namaKumpulanGlobal;
+            document.getElementById('papar-masa-akhir-senario').innerText = stringMasaSenario;
+
+            const mesejEl = document.getElementById('mesej-keputusan-senario');
+            if (skorSenario === 5) mesejEl.innerText = "Cemerlang! Telinga ejen sangat tajam bagaikan radar tajwid.";
+            else if (skorSenario >= 3) mesejEl.innerText = "Bagus Detektif! Anda berjaya merungkai kebanyakan fail kes.";
+            else mesejEl.innerText = "Terus berlatih! Boleh tanya Ustaz AI kalau keliru.";
+            
+            if(window.simpanKeAwan) window.simpanKeAwan({
+                nama: namaKumpulanGlobal, topik: 'Detektif Lahn (Misi 1)',
+                skor: skorSenario, durasi: stringMasaSenario,
+                tarikh: new Date().toLocaleString('ms-MY'), timestamp: Date.now()
+            });
+        }
+
+        function setSemulaSenario() {
+            document.getElementById('keputusan-senario').classList.add('hidden');
+            document.getElementById('mula-senario-skrin').classList.remove('hidden');
+        }
+
+        // --- ALIRAN TERUS KE WORD SEARCH ---
+        function teruskanKeWordSearch() {
+            bukaTab('tab-kuiz');
+            document.getElementById('nama-kumpulan-ws').value = namaKumpulanGlobal;
+            mulaWordSearch(); // Terus mula tanpa skrin awal
+        }
+
+        /* --- WORD SEARCH --- */
+        const wordsLahn = ["JALI", "KHAFI", "HARAM", "MAKRUH", "BARIS", "HURUF", "SABDU", "MAKNA", "DENGUNG", "TAKRIR", "TAJWID", "TAMBAH", "KURANG", "SIFAT", "MAD"];
+        const gridSize = 12;
+        let currentGrid = [], currentWords = [], foundWordsInLevel = [];
+        let skorWS = 0, selPertama = null;
+        let masaMulaWS = 0, masaTamatWS = 0, stringMasaWS = "";
+
+        function mulaWordSearch() {
+            const inputNama = document.getElementById('nama-kumpulan-ws').value.trim();
+            if(inputNama === "") { document.getElementById('amaran-nama-ws').classList.remove('hidden'); return; }
+            
+            document.getElementById('amaran-nama-ws').classList.add('hidden');
+            namaKumpulanGlobal = inputNama;
+            
+            document.getElementById('mula-kuiz-skrin').classList.add('hidden');
+            document.getElementById('permainan-ws-skrin').classList.remove('hidden');
+            document.getElementById('permainan-ws-skrin').classList.add('flex');
+            
+            skorWS = 0; masaMulaWS = Date.now(); selPertama = null; foundWordsInLevel = [];
+            currentWords = [...wordsLahn];
+            
+            document.getElementById('papar-skor-ws').innerText = `Skor: 0 / 15`;
+            currentGrid = janaGrid(currentWords, gridSize);
+            lukisGrid(); lukisSenaraiPerkataan();
+        }
+
+        function janaGrid(senarai, saiz) {
+            let grid = Array(saiz).fill(null).map(() => Array(saiz).fill(''));
+            const arah = [ [0,1], [1,0], [1,1], [0,-1], [-1,0], [-1,-1], [-1,1], [1,-1] ];
+
+            for (let perkataan of senarai) {
+                let diletak = false, cubaan = 0;
+                while (!diletak && cubaan < 500) {
                     cubaan++;
                     let dir = arah[Math.floor(Math.random() * arah.length)];
-                    let r = Math.floor(Math.random() * saiz);
-                    let c = Math.floor(Math.random() * saiz);
+                    let r = Math.floor(Math.random() * saiz), c = Math.floor(Math.random() * saiz);
+                    let endR = r + dir[0] * (perkataan.length - 1), endC = c + dir[1] * (perkataan.length - 1);
 
-                    let hujungR = r + dir[0] * (perkataan.length - 1);
-                    let hujungC = c + dir[1] * (perkataan.length - 1);
-
-                    if (hujungR >= 0 && hujungR < saiz && hujungC >= 0 && hujungC < saiz) {
+                    if (endR >= 0 && endR < saiz && endC >= 0 && endC < saiz) {
                         let muat = true;
                         for (let i = 0; i < perkataan.length; i++) {
-                            let currR = r + dir[0] * i;
-                            let currC = c + dir[1] * i;
-                            if (grid[currR][currC] !== '' && grid[currR][currC] !== perkataan[i]) {
-                                muat = false;
-                                break;
-                            }
+                            if (grid[r + dir[0]*i][c + dir[1]*i] !== '' && grid[r + dir[0]*i][c + dir[1]*i] !== perkataan[i]) { muat = false; break; }
                         }
                         if (muat) {
-                            for (let i = 0; i < perkataan.length; i++) {
-                                let currR = r + dir[0] * i;
-                                let currC = c + dir[1] * i;
-                                grid[currR][currC] = perkataan[i];
-                            }
-                            berjayaLetak = true;
+                            for (let i = 0; i < perkataan.length; i++) grid[r + dir[0]*i][c + dir[1]*i] = perkataan[i];
+                            diletak = true;
                         }
                     }
                 }
             }
-
             const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            for (let r = 0; r < saiz; r++) {
-                for (let c = 0; c < saiz; c++) {
-                    if (grid[r][c] === '') {
-                        grid[r][c] = abjad.charAt(Math.floor(Math.random() * abjad.length));
-                    }
-                }
-            }
+            for (let r=0; r<saiz; r++) for (let c=0; c<saiz; c++) if (grid[r][c] === '') grid[r][c] = abjad.charAt(Math.floor(Math.random() * 26));
             return grid;
         }
 
         function lukisGrid() {
             const bekas = document.getElementById('grid-container');
             bekas.innerHTML = '';
-            
-            for (let r = 0; r < gridSize; r++) {
-                for (let c = 0; c < gridSize; c++) {
+            for (let r=0; r<gridSize; r++) {
+                for (let c=0; c<gridSize; c++) {
                     let div = document.createElement('div');
-                    div.className = "ws-cell bg-white border border-gray-200 rounded-md flex items-center justify-center font-bold text-gray-800 text-sm md:text-base";
+                    div.className = "ws-cell bg-white flex items-center justify-center font-extrabold text-gray-700 text-sm md:text-lg md:text-xl rounded-lg";
                     div.innerText = currentGrid[r][c];
                     div.onclick = () => tekanSel(r, c, div);
                     bekas.appendChild(div);
@@ -658,302 +827,173 @@
             }
         }
 
-        function tekanSel(r, c, elemen) {
-            if (elemen.classList.contains('found')) return;
-
+        function tekanSel(r, c, el) {
+            if (el.classList.contains('found')) return;
             if (!selPertama) {
-                selPertama = { r, c, el: elemen };
-                elemen.classList.add('selected');
+                selPertama = { r, c, el }; el.classList.add('selected');
             } else {
                 let r1 = selPertama.r, c1 = selPertama.c;
-                let r2 = r, c2 = c;
+                let dr = r - r1, dc = c - c1;
+                let steps = Math.max(Math.abs(dr), Math.abs(dc));
                 
-                let dr = r2 - r1;
-                let dc = c2 - c1;
-                let maxSteps = Math.max(Math.abs(dr), Math.abs(dc));
-                
-                if (maxSteps === 0) {
-                    selPertama.el.classList.remove('selected');
-                    selPertama = null;
-                    return;
-                }
-                
+                if (steps === 0) { selPertama.el.classList.remove('selected'); selPertama = null; return; }
                 if (Math.abs(dr) !== 0 && Math.abs(dc) !== 0 && Math.abs(dr) !== Math.abs(dc)) {
-                    selPertama.el.classList.remove('selected');
-                    selPertama = { r, c, el: elemen }; 
-                    elemen.classList.add('selected');
-                    return;
+                    selPertama.el.classList.remove('selected'); selPertama = { r, c, el }; el.classList.add('selected'); return;
                 }
                 
-                let stepR = dr === 0 ? 0 : dr / Math.abs(dr);
-                let stepC = dc === 0 ? 0 : dc / Math.abs(dc);
-                let perkataanDibentuk = "";
-                let laluan = [];
-                
-                for (let i = 0; i <= maxSteps; i++) {
-                    let curR = r1 + i * stepR;
-                    let curC = c1 + i * stepC;
-                    perkataanDibentuk += currentGrid[curR][curC];
-                    laluan.push({r: curR, c: curC});
+                let sR = dr===0?0:dr/Math.abs(dr), sC = dc===0?0:dc/Math.abs(dc);
+                let word = "", path = [];
+                for (let i=0; i<=steps; i++) {
+                    word += currentGrid[r1 + i*sR][c1 + i*sC]; path.push({r: r1 + i*sR, c: c1 + i*sC});
                 }
                 
-                semakPerkataanDitemui(perkataanDibentuk, laluan);
-                
-                selPertama.el.classList.remove('selected');
-                selPertama = null;
+                semakWord(word, path);
+                selPertama.el.classList.remove('selected'); selPertama = null;
             }
         }
 
-        function semakPerkataanDitemui(perkataan, laluan) {
-            const perkataanReverse = perkataan.split('').reverse().join('');
-            let ditemui = false;
-            let perkataanTepat = "";
-
-            if (currentWords.includes(perkataan) && !foundWordsInLevel.includes(perkataan)) {
-                ditemui = true;
-                perkataanTepat = perkataan;
-            } else if (currentWords.includes(perkataanReverse) && !foundWordsInLevel.includes(perkataanReverse)) {
-                ditemui = true;
-                perkataanTepat = perkataanReverse;
-            }
+        function semakWord(word, path) {
+            const wordRev = word.split('').reverse().join('');
+            let betul = "";
+            if (currentWords.includes(word) && !foundWordsInLevel.includes(word)) betul = word;
+            else if (currentWords.includes(wordRev) && !foundWordsInLevel.includes(wordRev)) betul = wordRev;
             
-            if (ditemui) {
-                foundWordsInLevel.push(perkataanTepat);
-                skor++;
-                kemaskiniSkorUI();
-                
-                const semuaSel = document.querySelectorAll('.ws-cell');
-                laluan.forEach(koordinat => {
-                    let indeks = koordinat.r * gridSize + koordinat.c;
-                    semuaSel[indeks].classList.add('found');
-                });
-                
-                document.getElementById('word-' + perkataanTepat).classList.add('found');
-                document.getElementById('word-' + perkataanTepat).innerText += " ✔";
-                
-                if (foundWordsInLevel.length === currentWords.length) {
-                    setTimeout(() => {
-                        tamatWordSearch();
-                    }, 500); // Terus tamat tanpa butang 'Seterusnya'
-                }
+            if (betul) {
+                foundWordsInLevel.push(betul); skorWS++;
+                document.getElementById('papar-skor-ws').innerText = `Skor: ${skorWS} / 15`;
+                const cells = document.querySelectorAll('.ws-cell');
+                path.forEach(ko => cells[ko.r * gridSize + ko.c].classList.add('found'));
+                let listItem = document.getElementById('word-' + betul);
+                listItem.classList.add('found'); listItem.innerHTML = `<span>✨</span> ${betul}`;
+                if (foundWordsInLevel.length === currentWords.length) setTimeout(tamatWordSearch, 600);
             }
         }
 
         function lukisSenaraiPerkataan() {
-            const ul = document.getElementById('senarai-perkataan');
-            ul.innerHTML = '';
-            currentWords.forEach(word => {
-                let li = document.createElement('li');
-                li.id = 'word-' + word;
-                li.className = "word-list-item px-2 py-1 bg-white rounded border border-gray-100 flex items-center gap-2 before:content-['•'] before:text-utama text-gray-800";
-                li.innerText = word;
-                ul.appendChild(li);
+            const ul = document.getElementById('senarai-perkataan'); ul.innerHTML = '';
+            currentWords.forEach(w => {
+                let li = document.createElement('li'); li.id = 'word-'+w;
+                li.className = "word-list-item px-4 py-2 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-2";
+                li.innerHTML = `<span>•</span> ${w}`; ul.appendChild(li);
             });
-        }
-
-        function seterusnyaWordSearch() {
-            // Fungsi ini tidak lagi digunakan secara berterusan kerana sudah diasingkan
-            tamatWordSearch();
         }
 
         function tamatWordSearch() {
-            uiSkrinPermainan.classList.add('hidden');
-            uiSkrinPermainan.classList.remove('flex');
-            uiSkrinKeputusan.classList.remove('hidden');
+            masaTamatWS = Date.now();
+            const durasiSaat = Math.floor((masaTamatWS - masaMulaWS) / 1000);
+            stringMasaWS = `${Math.floor(durasiSaat/60)}m ${durasiSaat%60}s`;
 
-            document.getElementById('skor-akhir').innerText = skor;
-            document.getElementById('papar-nama-keputusan').innerText = namaPelajarSemasa;
-            document.getElementById('papar-topik-keputusan').innerText = modePermainan === 'lahn' ? 'Lahn' : 'Maratib';
-            
-            const mesejEl = document.getElementById('mesej-keputusan');
-            const ikonEl = document.getElementById('ikon-keputusan');
-            
-            if (skor === 10) {
-                mesejEl.innerText = "Sempurna! Mata anda setajam helang, anda pakar Tajwid sebenar!";
-                mesejEl.className = "text-lg font-semibold text-green-600 mb-8";
-                ikonEl.innerText = "🌟";
-            } else if (skor >= 5) {
-                mesejEl.innerText = "Bagus! Anda berjaya menemui banyak perkataan tersembunyi.";
-                mesejEl.className = "text-lg font-semibold text-utama mb-8";
-                ikonEl.innerText = "👍";
-            } else {
-                mesejEl.innerText = "Jangan putus asa, cabaran ini memang menguji ketajaman mata!";
-                mesejEl.className = "text-lg font-semibold text-amber-600 mb-8";
-                ikonEl.innerText = "👀";
-            }
+            document.getElementById('permainan-ws-skrin').classList.add('hidden');
+            document.getElementById('permainan-ws-skrin').classList.remove('flex');
+            document.getElementById('keputusan-kuiz').classList.remove('hidden');
 
-            const tarikhSemasa = new Date().toLocaleString('ms-MY');
-            const rekodBaru = {
-                nama: namaPelajarSemasa,
-                topik: modePermainan === 'lahn' ? 'Lahn' : 'Maratib',
-                skor: skor,
-                tarikh: tarikhSemasa
-            };
+            document.getElementById('skor-akhir').innerText = skorWS;
+            document.getElementById('papar-nama-keputusan').innerText = namaKumpulanGlobal;
+            document.getElementById('papar-masa-akhir-ws').innerText = stringMasaWS;
             
-            rekodKeseluruhan.push(rekodBaru);
-            kemaskiniJadualGuru();
+            if (skorWS === 15) document.getElementById('mesej-keputusan').innerText = "Sempurna! Pantas dan cekap.";
+            else document.getElementById('mesej-keputusan').innerText = "Usaha yang bagus! Misi selesai.";
+
+            if(window.simpanKeAwan) window.simpanKeAwan({
+                nama: namaKumpulanGlobal, topik: 'Word Search Lahn (Misi 2)',
+                skor: skorWS, durasi: stringMasaWS,
+                tarikh: new Date().toLocaleString('ms-MY'), timestamp: Date.now()
+            });
         }
 
         function setSemulaKuiz() {
-            uiSkrinKeputusan.classList.add('hidden');
-            uiSkrinMula.classList.remove('hidden');
-            document.getElementById('nama-pelajar').value = ""; 
+            document.getElementById('keputusan-kuiz').classList.add('hidden');
+            document.getElementById('mula-kuiz-skrin').classList.remove('hidden');
         }
 
-        function kemaskiniSkorUI() {
-            document.getElementById('papar-skor-ws').innerText = `Skor: ${skor} / 10`;
-        }
+        /* --- JADUAL LIVE GURU --- */
+        window.kemaskiniJadualGuru = function() {
+            const jadual = document.getElementById('jadual-rekod-body');
+            if (window.rekodKeseluruhan && window.rekodKeseluruhan.length > 0) {
+                jadual.innerHTML = ''; 
+                window.rekodKeseluruhan.forEach((rekod, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.className = "border-b border-gray-200 hover:bg-emerald-50 transition bg-white";
+                    let maxMarkah = rekod.topik.includes('Misi 1') ? 5 : 15;
+                    let skorTinggi = (rekod.skor / maxMarkah) >= 0.5;
 
-        function kemaskiniJadualGuru() {
-            const jadualBody = document.getElementById('jadual-rekod-body');
-            
-            if (rekodKeseluruhan.length > 0) {
-                const barisKosong = document.getElementById('baris-kosong');
-                if (barisKosong) barisKosong.remove();
+                    tr.innerHTML = `
+                        <td class="py-4 px-4 font-bold text-gray-500">${idx + 1}</td>
+                        <td class="py-4 px-4 font-bold text-gray-800">${rekod.nama}</td>
+                        <td class="py-4 px-4 font-semibold text-gray-600"><span class="bg-gray-100 px-2 py-1 rounded border border-gray-200 text-xs">${rekod.topik}</span></td>
+                        <td class="py-4 px-4 text-center font-black ${skorTinggi ? 'text-green-600' : 'text-amber-500'}">${rekod.skor} / ${maxMarkah}</td>
+                        <td class="py-4 px-4 text-center font-bold text-blue-600">${rekod.durasi || '-'}</td>
+                        <td class="py-4 px-4 text-xs text-gray-500 font-medium">${rekod.tarikh}</td>
+                    `;
+                    jadual.appendChild(tr);
+                });
             }
-
-            const rekod = rekodKeseluruhan[rekodKeseluruhan.length - 1];
-            const indeks = rekodKeseluruhan.length;
-            
-            const tr = document.createElement('tr');
-            tr.className = "border-b border-gray-100 hover:bg-gray-50 transition";
-            tr.innerHTML = `
-                <td class="py-3 px-4">${indeks}</td>
-                <td class="py-3 px-4 font-medium text-gray-800">${rekod.nama}</td>
-                <td class="py-3 px-4 text-gray-600">${rekod.topik}</td>
-                <td class="py-3 px-4 text-center font-bold ${rekod.skor >= 8 ? 'text-green-600' : 'text-amber-600'}">${rekod.skor}</td>
-                <td class="py-3 px-4 text-sm text-gray-500">${rekod.tarikh}</td>
-            `;
-            jadualBody.appendChild(tr);
-        }
-
-        function muatTurunKeputusanIndividu() {
-            const tarikhSemasa = new Date().toLocaleString('ms-MY').replace(/,/g, '');
-            let csvContent = "\uFEFFNama Pelajar,Topik,Perkataan Dijumpai,Jumlah Perkataan,Tarikh & Masa\n";
-            csvContent += `"${namaPelajarSemasa}","${modePermainan === 'lahn' ? 'Lahn' : 'Maratib'}",${skor},10,"${tarikhSemasa}"\n`;
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            
-            const namaFailSafe = namaPelajarSemasa.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-            const namaTopik = modePermainan === 'lahn' ? 'Lahn' : 'Maratib';
-            link.setAttribute("href", url);
-            link.setAttribute("download", `Cari_Perkataan_${namaTopik}_${namaFailSafe}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
 
         function muatTurunSemuaRekod() {
-            if (rekodKeseluruhan.length === 0) {
-                alert("Belum ada sebarang rekod pelajar untuk dimuat turun.");
-                return;
-            }
-
-            let csvContent = "\uFEFFBil,Nama Pelajar,Topik,Perkataan Dijumpai,Jumlah Perkataan,Tarikh\n";
-            rekodKeseluruhan.forEach((rekod, index) => {
-                csvContent += `${index + 1},"${rekod.nama}","${rekod.topik}",${rekod.skor},10,"${rekod.tarikh}"\n`;
+            if (!window.rekodKeseluruhan || window.rekodKeseluruhan.length === 0) return alert("Tiada rekod.");
+            let csv = "\uFEFFBil,Nama Kumpulan,Misi / Topik,Markah,Markah Penuh,Masa Diambil,Tarikh\n";
+            window.rekodKeseluruhan.forEach((rekod, i) => {
+                let max = rekod.topik.includes('Misi 1') ? 5 : 15;
+                csv += `${i + 1},"${rekod.nama}","${rekod.topik}",${rekod.skor},${max},"${rekod.durasi||'-'}","${rekod.tarikh}"\n`;
             });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `Rekod_Keseluruhan_WordSearch.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = `Laporan_Maharat_Kumpulan.csv`; link.click();
         }
 
-        /* FUNGSI CHAT AI USTAZ 'AKASHAH */
-        function handleEnter(e) {
-            if (e.key === 'Enter') {
-                hantarMesej();
-            }
-        }
+        /* --- CHAT AI USTAZ AKASHAH --- */
+        function handleEnter(e) { if (e.key === 'Enter') hantarMesej(); }
 
-        async function hantarMesej() {
-            const inputEl = document.getElementById('input-chat');
-            const teks = inputEl.value.trim();
+        function hantarMesej() {
+            const input = document.getElementById('input-chat');
+            const teks = input.value.trim();
             if (teks === "") return;
-
-            paparMesejUser(teks);
-            inputEl.value = "";
-            inputEl.disabled = true;
-
-            const mesejLoadingID = paparMesejLoading();
+            paparMesejUser(teks); input.value = ""; input.disabled = true;
+            const loadID = paparMesejLoading();
             
-            try {
-                const systemPrompt = "Anda adalah Ustaz 'Akashah AI, seorang guru Pendidikan Islam mesra di Malaysia. Anda pakar dalam ilmu Tajwid KSSM Tingkatan 1, khususnya topik Lahn (Jali & Khafi) dan Maratib Qiraat. Jawab dengan ringkas (maksimum 3 ayat), mesra, dan gunakan gaya bahasa ustaz berbual dengan pelajar (gunakan ganti nama 'ustaz').";
-                
-                setTimeout(() => {
-                    buangLoading(mesejLoadingID);
-                    let jawapanSimulasi = "Alhamdulillah, soalan yang bagus! Lahn Jali ialah kesalahan besar yang mengubah makna, contohnya menukar baris atas kepada baris depan. Manakala Lahn Khafi pula kesalahan kecil yang tak ubah makna, contohnya tertinggal dengung. Jelas tak setakat ni?";
-                    
-                    if(teks.toLowerCase().includes("maratib") || teks.toLowerCase().includes("kelajuan")) {
-                        jawapanSimulasi = "Maratib Qiraat tu maksudnya kelajuan kita baca Al-Quran. Ada 4 jenis tau: Tahqiq (paling lambat), Tartil (sederhana lambat), Tadwir (sederhana laju), dan Hadr (paling laju). Ustaz harap awak faham ya!";
-                    }
-
-                    paparMesejAI(jawapanSimulasi);
-                    inputEl.disabled = false;
-                    inputEl.focus();
-                }, 1500);
-
-            } catch (error) {
-                buangLoading(mesejLoadingID);
-                paparMesejAI("Maaf, ustaz tak dapat jawab sekarang. Sistem ustaz ada sedikit gangguan teknikal. Cuba lagi nanti ya.");
-                inputEl.disabled = false;
-            }
+            setTimeout(() => {
+                buangLoading(loadID);
+                paparMesejAI(analisisSoalanPelajar(teks.toLowerCase()));
+                input.disabled = false; input.focus();
+            }, 1000);
         }
 
-        function paparMesejUser(teks) {
-            const chatbox = document.getElementById('chatbox');
-            const div = document.createElement('div');
-            div.className = "flex gap-3 max-w-[85%] ml-auto";
-            div.innerHTML = `
-                <div class="msg-user p-3 text-sm shadow-sm">${teks}</div>
-                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm flex-shrink-0">🧑‍🎓</div>
-            `;
-            chatbox.appendChild(div);
-            chatbox.scrollTop = chatbox.scrollHeight;
+        function analisisSoalanPelajar(t) {
+            if (t.includes('أَنعَمتَ') || t.includes('أنعمت') || t.includes('tukar baris')) return "💡 **Klu Detektif:** Kalau baris atas (Ta) ditukar ke baris depan (Tu), adakah huruf bertambah atau cuma baris berubah? Perubahan ini mengubah makna 100%, jadi ia **Lahn Jali**.";
+            if (t.includes('عَصَى') || t.includes('عَسَى') || t.includes('fatimah')) return "💡 **Klu Detektif:** Ada perbezaan besar antara huruf 'Sod' dan 'Sin'. Tertukar huruf = maksud lari. Rujuk nota Lahn Jali 'Menukar Huruf'.";
+            if (t.includes('ضَّالِّينَ') || t.includes('pendek')) return "💡 **Klu Detektif:** Memendekkan mad lazim mencederakan tajwid tapi TIDAK ubah makna. Kalau tak ubah makna, ia **Lahn Khafi**.";
+            if (t.includes('مِن قَبْلِ') || t.includes('من قبل') || t.includes('dengung')) return "💡 **Klu Detektif:** Tinggal dengung Ikhfa' adalah **Lahn Khafi**. Hukum melakukannya adalah makruh.";
+            if (t.includes('أَذْبَحَنَّهُ') || t.includes('tambah')) return "💡 **Klu Detektif:** Ditambah huruf Alif jadi 'Laa' (tidak). Penambahan huruf ubah makna total = **Lahn Jali**.";
+            if (t.includes('أَنتُمْ') || t.includes('أنتم') || t.includes('laju')) return "💡 **Klu Detektif:** Suspek buang huruf 'Alif mad' sebab laju. Mengurangkan huruf = **Lahn Jali**.";
+            if (t.includes('haram') || t.includes('musnah')) return "💡 **Klu Teka-Teki:** Kesalahan ini nyata/jelas (Jali) kerana ia merosakkan makna firman Tuhan.";
+            if (t.includes('bot laju') || t.includes('getar')) return "💡 **Klu Teka-Teki:** Sifat lidah bergetar ialah 'Takrir' bagi huruf Ra'. Getaran melampau adalah **Lahn Khafi**.";
+            if (t.includes('sembunyi') || t.includes('awam')) return "💡 **Klu Teka-Teki:** Perkataan Arab bagi tersembunyi ialah Khafi.";
+            if (t.includes('tebal') || t.includes('nipis') || t.includes('adil')) return "💡 **Klu Teka-Teki:** Ini melibatkan 'Sifat Huruf'. Tidak menyebut ketebalan sempurna tidak ubah makna, jadi ia **Lahn Khafi**.";
+            return "Kumpulan detektif, sila masukkan kata kunci yang tepat dari fail kes, contohnya kalimah Arab atau perkataan seperti 'getar', 'tebal', atau 'pendek'. Ustaz akan berikan klu yang spesifik!";
         }
 
-        function paparMesejAI(teks) {
-            const chatbox = document.getElementById('chatbox');
-            const div = document.createElement('div');
-            div.className = "flex gap-3 max-w-[85%]";
-            div.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-utama flex items-center justify-center text-white text-sm flex-shrink-0">👳‍♂️</div>
-                <div class="msg-ai p-3 text-sm shadow-sm">${teks}</div>
-            `;
-            chatbox.appendChild(div);
-            chatbox.scrollTop = chatbox.scrollHeight;
+        function paparMesejUser(t) {
+            const cb = document.getElementById('chatbox'), div = document.createElement('div');
+            div.className = "flex gap-3 max-w-[85%] ml-auto mb-4";
+            div.innerHTML = `<div class="msg-user p-4 text-sm md:text-base font-medium chat-bubble">${t}</div><div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-lg flex-shrink-0 shadow-sm border border-emerald-200">🕵️</div>`;
+            cb.appendChild(div); cb.scrollTop = cb.scrollHeight;
+        }
+
+        function paparMesejAI(t) {
+            const cb = document.getElementById('chatbox'), div = document.createElement('div');
+            div.className = "flex gap-3 max-w-[85%] mb-4";
+            div.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-utama to-emerald-500 flex items-center justify-center text-white text-lg flex-shrink-0 shadow-md">👳‍♂️</div><div class="msg-ai p-4 text-sm md:text-base chat-bubble">${t}</div>`;
+            cb.appendChild(div); cb.scrollTop = cb.scrollHeight;
         }
 
         function paparMesejLoading() {
-            const id = 'loading-' + Date.now();
-            const chatbox = document.getElementById('chatbox');
-            const div = document.createElement('div');
-            div.id = id;
-            div.className = "flex gap-3 max-w-[85%]";
-            div.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-utama flex items-center justify-center text-white text-sm flex-shrink-0">👳‍♂️</div>
-                <div class="msg-ai p-3 text-sm shadow-sm flex items-center gap-1">
-                    <span class="animate-bounce">.</span><span class="animate-bounce" style="animation-delay: 0.1s">.</span><span class="animate-bounce" style="animation-delay: 0.2s">.</span>
-                </div>
-            `;
-            chatbox.appendChild(div);
-            chatbox.scrollTop = chatbox.scrollHeight;
-            return id;
+            const id = 'load-'+Date.now(), cb = document.getElementById('chatbox'), div = document.createElement('div');
+            div.id = id; div.className = "flex gap-3 max-w-[85%] mb-4";
+            div.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-utama to-emerald-500 flex items-center justify-center text-white flex-shrink-0 shadow-md">👳‍♂️</div><div class="msg-ai p-4 flex gap-1"><span class="animate-bounce">.</span><span class="animate-bounce" style="animation-delay: 0.1s">.</span><span class="animate-bounce" style="animation-delay: 0.2s">.</span></div>`;
+            cb.appendChild(div); cb.scrollTop = cb.scrollHeight; return id;
         }
-
-        function buangLoading(id) {
-            const el = document.getElementById(id);
-            if(el) el.remove();
-        }
+        function buangLoading(id) { const el = document.getElementById(id); if(el) el.remove(); }
     </script>
 </body>
 </html>
