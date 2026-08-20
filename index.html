@@ -343,7 +343,7 @@
                         <span class="text-5xl">🔍</span>
                     </div>
                     <h2 class="text-3xl font-bold text-utama mb-4">Cabaran Cari Perkataan (Sukar)</h2>
-                    <p class="text-gray-600 mb-6 max-w-lg mx-auto">Uji ketajaman mata anda! Cari 20 perkataan dalam 2 tahap (Lahn & Maratib). Perkataan disorok melintang, menegak, pepenjuru dan <b class="text-red-500">terbalik!</b></p>
+                    <p class="text-gray-600 mb-6 max-w-lg mx-auto">Uji ketajaman mata anda! Pilih topik yang anda ingin cabar. Setiap topik mengandungi 10 perkataan tersembunyi melintang, menegak, pepenjuru dan <b class="text-red-500">terbalik!</b></p>
                     
                     <div class="max-w-sm mx-auto mb-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
                         <label for="nama-pelajar" class="block text-sm font-bold text-gray-700 mb-2 text-left">Nama Penuh Pelajar:</label>
@@ -351,9 +351,14 @@
                         <p id="amaran-nama" class="text-red-500 text-sm mt-2 hidden text-left">Sila masukkan nama anda sebelum mula.</p>
                     </div>
 
-                    <button onclick="mulaWordSearch()" class="bg-utama hover:bg-emerald-800 text-white font-bold py-3 px-8 rounded-full text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                        Mula Cabaran Sekarang
-                    </button>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="mulaWordSearch('lahn')" class="bg-utama hover:bg-emerald-800 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            Cabaran Lahn (10 Kata)
+                        </button>
+                        <button onclick="mulaWordSearch('maratib')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            Cabaran Maratib (10 Kata)
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Skrin Permainan Word Search -->
@@ -361,8 +366,8 @@
                     <!-- Bahagian Papan Grid -->
                     <div class="flex-1 flex flex-col items-center w-full">
                         <div class="w-full flex justify-between items-center mb-4">
-                            <h3 id="tajuk-tahap" class="text-xl md:text-2xl font-bold text-utama">Tahap 1: Lahn</h3>
-                            <span class="bg-emerald-100 text-utama font-bold px-4 py-1 rounded-full text-sm shadow-sm" id="papar-skor-ws">Skor: 0 / 20</span>
+                            <h3 id="tajuk-tahap" class="text-xl md:text-2xl font-bold text-utama">Topik: Lahn</h3>
+                            <span class="bg-emerald-100 text-utama font-bold px-4 py-1 rounded-full text-sm shadow-sm" id="papar-skor-ws">Skor: 0 / 10</span>
                         </div>
                         
                         <div class="bg-blue-50 text-blue-800 text-xs md:text-sm p-3 rounded-lg mb-4 w-full text-center border border-blue-200 shadow-sm">
@@ -399,8 +404,8 @@
                 <div id="keputusan-kuiz" class="hidden p-10 text-center">
                     <div id="ikon-keputusan" class="text-6xl mb-4">🏆</div>
                     <h2 class="text-3xl font-bold text-utama mb-2">Tahniah, <span id="papar-nama-keputusan">Pelajar</span>!</h2>
-                    <p class="text-xl text-gray-600 mb-6">Kata Kunci Dijumpai:</p>
-                    <div class="text-6xl font-extrabold text-aksen mb-8"><span id="skor-akhir">0</span> / 20</div>
+                    <p class="text-xl text-gray-600 mb-6">Topik: <span id="papar-topik-keputusan" class="font-bold">Lahn</span> | Kata Kunci Dijumpai:</p>
+                    <div class="text-6xl font-extrabold text-aksen mb-8"><span id="skor-akhir">0</span> / 10</div>
                     <p id="mesej-keputusan" class="text-lg font-semibold text-gray-700 mb-8">Hebat! Anda memahami topik ini dengan cemerlang.</p>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -467,13 +472,14 @@
                                 <tr class="bg-emerald-50 text-utama border-b-2 border-emerald-200">
                                     <th class="py-3 px-4 font-bold">Bil</th>
                                     <th class="py-3 px-4 font-bold">Nama Pelajar</th>
-                                    <th class="py-3 px-4 font-bold text-center">Perkataan Jumpa ( / 20 )</th>
+                                    <th class="py-3 px-4 font-bold">Topik</th>
+                                    <th class="py-3 px-4 font-bold text-center">Skor ( / 10 )</th>
                                     <th class="py-3 px-4 font-bold">Tarikh & Masa</th>
                                 </tr>
                             </thead>
                             <tbody id="jadual-rekod-body">
                                 <tr id="baris-kosong">
-                                    <td colspan="4" class="py-8 text-center text-gray-500 italic">Belum ada rekod pelajar mencari perkataan.</td>
+                                    <td colspan="5" class="py-8 text-center text-gray-500 italic">Belum ada rekod pelajar mencari perkataan.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -533,7 +539,7 @@
         let currentGrid = [];
         let currentWords = [];
         let foundWordsInLevel = [];
-        let tahapSemasa = 1; // 1 = Lahn, 2 = Maratib
+        let modePermainan = ''; // Menyimpan pilihan 'lahn' atau 'maratib'
         
         let skor = 0;
         let namaPelajarSemasa = "";
@@ -546,7 +552,7 @@
         const uiSkrinKeputusan = document.getElementById('keputusan-kuiz');
         const amaranNama = document.getElementById('amaran-nama');
 
-        function mulaWordSearch() {
+        function mulaWordSearch(mode) {
             const inputNama = document.getElementById('nama-pelajar').value.trim();
             if(inputNama === "") {
                 amaranNama.classList.remove('hidden');
@@ -555,12 +561,12 @@
             
             amaranNama.classList.add('hidden');
             namaPelajarSemasa = inputNama;
+            modePermainan = mode;
             
             uiSkrinMula.classList.add('hidden');
             uiSkrinPermainan.classList.remove('hidden');
             uiSkrinPermainan.classList.add('flex');
             
-            tahapSemasa = 1;
             skor = 0;
             kemaskiniSkorUI();
             binaTahap();
@@ -572,13 +578,12 @@
             document.getElementById('btn-tamat-awal').classList.remove('hidden');
             foundWordsInLevel = [];
             
-            if (tahapSemasa === 1) {
-                document.getElementById('tajuk-tahap').innerText = "Tahap 1: Lahn Jali & Khafi";
+            if (modePermainan === 'lahn') {
+                document.getElementById('tajuk-tahap').innerText = "Topik: Lahn Jali & Khafi";
                 currentWords = [...wordsLahn];
             } else {
-                document.getElementById('tajuk-tahap').innerText = "Tahap 2: Maratib Qiraat";
+                document.getElementById('tajuk-tahap').innerText = "Topik: Maratib Qiraat";
                 currentWords = [...wordsMaratib];
-                document.getElementById('btn-seterusnya').innerHTML = `Hantar Markah <span>🏆</span>`;
             }
             
             currentGrid = janaGrid(currentWords, gridSize);
@@ -727,8 +732,9 @@
                 document.getElementById('word-' + perkataanTepat).innerText += " ✔";
                 
                 if (foundWordsInLevel.length === currentWords.length) {
-                    document.getElementById('btn-seterusnya').classList.remove('hidden');
-                    document.getElementById('btn-tamat-awal').classList.add('hidden');
+                    setTimeout(() => {
+                        tamatWordSearch();
+                    }, 500); // Terus tamat tanpa butang 'Seterusnya'
                 }
             }
         }
@@ -746,12 +752,8 @@
         }
 
         function seterusnyaWordSearch() {
-            if (tahapSemasa === 1) {
-                tahapSemasa = 2;
-                binaTahap();
-            } else {
-                tamatWordSearch();
-            }
+            // Fungsi ini tidak lagi digunakan secara berterusan kerana sudah diasingkan
+            tamatWordSearch();
         }
 
         function tamatWordSearch() {
@@ -761,15 +763,16 @@
 
             document.getElementById('skor-akhir').innerText = skor;
             document.getElementById('papar-nama-keputusan').innerText = namaPelajarSemasa;
+            document.getElementById('papar-topik-keputusan').innerText = modePermainan === 'lahn' ? 'Lahn' : 'Maratib';
             
             const mesejEl = document.getElementById('mesej-keputusan');
             const ikonEl = document.getElementById('ikon-keputusan');
             
-            if (skor === 20) {
+            if (skor === 10) {
                 mesejEl.innerText = "Sempurna! Mata anda setajam helang, anda pakar Tajwid sebenar!";
                 mesejEl.className = "text-lg font-semibold text-green-600 mb-8";
                 ikonEl.innerText = "🌟";
-            } else if (skor >= 10) {
+            } else if (skor >= 5) {
                 mesejEl.innerText = "Bagus! Anda berjaya menemui banyak perkataan tersembunyi.";
                 mesejEl.className = "text-lg font-semibold text-utama mb-8";
                 ikonEl.innerText = "👍";
@@ -782,6 +785,7 @@
             const tarikhSemasa = new Date().toLocaleString('ms-MY');
             const rekodBaru = {
                 nama: namaPelajarSemasa,
+                topik: modePermainan === 'lahn' ? 'Lahn' : 'Maratib',
                 skor: skor,
                 tarikh: tarikhSemasa
             };
@@ -797,7 +801,7 @@
         }
 
         function kemaskiniSkorUI() {
-            document.getElementById('papar-skor-ws').innerText = `Skor: ${skor} / 20`;
+            document.getElementById('papar-skor-ws').innerText = `Skor: ${skor} / 10`;
         }
 
         function kemaskiniJadualGuru() {
@@ -816,7 +820,8 @@
             tr.innerHTML = `
                 <td class="py-3 px-4">${indeks}</td>
                 <td class="py-3 px-4 font-medium text-gray-800">${rekod.nama}</td>
-                <td class="py-3 px-4 text-center font-bold ${rekod.skor >= 15 ? 'text-green-600' : 'text-amber-600'}">${rekod.skor}</td>
+                <td class="py-3 px-4 text-gray-600">${rekod.topik}</td>
+                <td class="py-3 px-4 text-center font-bold ${rekod.skor >= 8 ? 'text-green-600' : 'text-amber-600'}">${rekod.skor}</td>
                 <td class="py-3 px-4 text-sm text-gray-500">${rekod.tarikh}</td>
             `;
             jadualBody.appendChild(tr);
@@ -824,16 +829,17 @@
 
         function muatTurunKeputusanIndividu() {
             const tarikhSemasa = new Date().toLocaleString('ms-MY').replace(/,/g, '');
-            let csvContent = "\uFEFFNama Pelajar,Perkataan Dijumpai,Jumlah Perkataan,Tarikh & Masa\n";
-            csvContent += `"${namaPelajarSemasa}",${skor},20,"${tarikhSemasa}"\n`;
+            let csvContent = "\uFEFFNama Pelajar,Topik,Perkataan Dijumpai,Jumlah Perkataan,Tarikh & Masa\n";
+            csvContent += `"${namaPelajarSemasa}","${modePermainan === 'lahn' ? 'Lahn' : 'Maratib'}",${skor},10,"${tarikhSemasa}"\n`;
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             
             const namaFailSafe = namaPelajarSemasa.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const namaTopik = modePermainan === 'lahn' ? 'Lahn' : 'Maratib';
             link.setAttribute("href", url);
-            link.setAttribute("download", `Cari_Perkataan_${namaFailSafe}.csv`);
+            link.setAttribute("download", `Cari_Perkataan_${namaTopik}_${namaFailSafe}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
@@ -846,9 +852,9 @@
                 return;
             }
 
-            let csvContent = "\uFEFFBil,Nama Pelajar,Perkataan Dijumpai,Jumlah Perkataan,Tarikh\n";
+            let csvContent = "\uFEFFBil,Nama Pelajar,Topik,Perkataan Dijumpai,Jumlah Perkataan,Tarikh\n";
             rekodKeseluruhan.forEach((rekod, index) => {
-                csvContent += `${index + 1},"${rekod.nama}",${rekod.skor},20,"${rekod.tarikh}"\n`;
+                csvContent += `${index + 1},"${rekod.nama}","${rekod.topik}",${rekod.skor},10,"${rekod.tarikh}"\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
