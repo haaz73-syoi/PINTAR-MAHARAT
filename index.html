@@ -54,6 +54,12 @@
         }
         .msg-ai { background-color: #e6f4ea; color: #064e3b; border-bottom-right-radius: 1rem; border-top-right-radius: 1rem; border-top-left-radius: 1rem; }
         .msg-user { background-color: #d1fae5; color: #065f46; border-bottom-left-radius: 1rem; border-top-right-radius: 1rem; border-top-left-radius: 1rem; margin-left: auto;}
+        
+        /* Word Search Styling */
+        .ws-cell { transition: all 0.2s; cursor: pointer; user-select: none; touch-action: manipulation; }
+        .ws-cell.selected { background-color: #fef08a; transform: scale(1.1); box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); border-color: #f59e0b; z-index: 10; }
+        .ws-cell.found { background-color: #34d399; color: white; border-color: #059669; transform: scale(1.05); }
+        .word-list-item.found { text-decoration: line-through; color: #9ca3af; }
     </style>
 </head>
 <body class="text-gray-800">
@@ -70,7 +76,7 @@
             <nav class="flex overflow-x-auto w-full md:w-auto gap-2 md:gap-4 pb-2 md:pb-0 hide-scroll">
                 <button onclick="bukaTab('tab-nota')" id="btn-tab-nota" class="tab-btn active px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">📚 Nota Lahn</button>
                 <button onclick="bukaTab('tab-maratib')" id="btn-tab-maratib" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">⏱️ Maratib</button>
-                <button onclick="bukaTab('tab-kuiz')" id="btn-tab-kuiz" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">🧠 Kuiz Minda</button>
+                <button onclick="bukaTab('tab-kuiz')" id="btn-tab-kuiz" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">🧠 Word Search</button>
                 <button onclick="bukaTab('tab-chat')" id="btn-tab-chat" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">🤖 Tanya Ustaz 'Akashah</button>
                 <button onclick="bukaTab('tab-guru')" id="btn-tab-guru" class="tab-btn px-3 py-2 text-sm md:text-base font-semibold whitespace-nowrap transition-colors rounded-t-md hover:bg-emerald-600">📊 Rekod Live</button>
             </nav>
@@ -313,11 +319,11 @@
                             </div>
                             <h3 class="text-xl font-bold text-purple-700">Hadr</h3>
                             <span class="font-arabic text-lg text-purple-500 mb-2">الحدر</span>
-                            <div class="bg-purple-50 rounded px-2 py-1 text-sm font-bold text-purple-700 mb-2 w-full">Cepat</div>
-                            <p class="text-sm text-gray-600 mb-4">Bacaan cepat namun <b>tetap menjaga tajwid</b>. Digunakan untuk mengkhatamkan Al-Quran atau murajaah.</p>
+                            <div class="bg-purple-50 rounded px-2 py-1 text-sm font-bold text-purple-700 mb-2 w-full">Paling Laju</div>
+                            <p class="text-sm text-gray-600 mb-4">Bacaan yang laju tetapi masih memelihara hukum tajwid yang wajib (seperti dengung & mad). Biasa dibaca oleh hafiz untuk mengulang hafalan.</p>
                         </div>
                         <div class="mt-auto w-full">
-                            <button onclick="mainkanAudio('audio-hadr', 1.75, this)" class="btn-audio flex items-center justify-center gap-2 w-full bg-purple-100 hover:bg-purple-200 text-purple-800 py-2 rounded-lg transition font-bold text-sm shadow-sm border border-purple-200">
+                            <button onclick="mainkanAudio('audio-hadr', 1.8, this)" class="btn-audio flex items-center justify-center gap-2 w-full bg-purple-100 hover:bg-purple-200 text-purple-800 py-2 rounded-lg transition font-bold text-sm shadow-sm border border-purple-200">
                                 🔊 Dengar Contoh
                             </button>
                             <audio id="audio-hadr" src="https://server8.mp3quran.net/afs/001.mp3" preload="none"></audio>
@@ -327,17 +333,17 @@
             </div>
         </section>
 
-        <!-- TAB 3: Kuiz Minda -->
+        <!-- TAB 3: Kuiz Minda (Kini Word Search) -->
         <section id="tab-kuiz" class="tab-content">
-            <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 relative">
+            <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 relative">
                 
-                <!-- Skrin Permulaan Kuiz & Isi Nama -->
-                <div id="mula-kuiz-skrin" class="p-10 text-center">
+                <!-- Skrin Permulaan Word Search -->
+                <div id="mula-kuiz-skrin" class="p-8 md:p-10 text-center">
                     <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span class="text-5xl">🧠</span>
+                        <span class="text-5xl">🔍</span>
                     </div>
-                    <h2 class="text-3xl font-bold text-utama mb-4">Uji Kefahaman Anda!</h2>
-                    <p class="text-gray-600 mb-6">Jawab 15 soalan berkaitan Lahn dan Maratib Qiraat untuk menguji minda anda. Pastikan anda telah membaca nota di tab sebelah.</p>
+                    <h2 class="text-3xl font-bold text-utama mb-4">Cabaran Cari Perkataan (Sukar)</h2>
+                    <p class="text-gray-600 mb-6 max-w-lg mx-auto">Uji ketajaman mata anda! Cari 20 perkataan dalam 2 tahap (Lahn & Maratib). Perkataan disorok melintang, menegak, pepenjuru dan <b class="text-red-500">terbalik!</b></p>
                     
                     <div class="max-w-sm mx-auto mb-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
                         <label for="nama-pelajar" class="block text-sm font-bold text-gray-700 mb-2 text-left">Nama Penuh Pelajar:</label>
@@ -345,26 +351,47 @@
                         <p id="amaran-nama" class="text-red-500 text-sm mt-2 hidden text-left">Sila masukkan nama anda sebelum mula.</p>
                     </div>
 
-                    <button onclick="mulaKuiz()" class="bg-utama hover:bg-emerald-800 text-white font-bold py-3 px-8 rounded-full text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                        Mula Kuiz Sekarang
+                    <button onclick="mulaWordSearch()" class="bg-utama hover:bg-emerald-800 text-white font-bold py-3 px-8 rounded-full text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        Mula Cabaran Sekarang
                     </button>
                 </div>
 
-                <!-- Skrin Soalan -->
-                <div id="soalan-kuiz-skrin" class="hidden flex-col p-8 md:p-10">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="bg-emerald-100 text-utama font-bold px-4 py-1 rounded-full text-sm" id="papar-soalan-ke">Soalan 1 / 15</span>
-                        <span class="text-gray-500 font-semibold" id="papar-skor">Skor: 0</span>
-                    </div>
-                    
-                    <div class="w-full bg-gray-200 rounded-full h-2 mb-8">
-                        <div id="progress-bar" class="bg-utama h-2 rounded-full transition-all duration-300" style="width: 6.66%"></div>
+                <!-- Skrin Permainan Word Search -->
+                <div id="permainan-ws-skrin" class="hidden flex-col md:flex-row p-6 md:p-8 gap-8">
+                    <!-- Bahagian Papan Grid -->
+                    <div class="flex-1 flex flex-col items-center w-full">
+                        <div class="w-full flex justify-between items-center mb-4">
+                            <h3 id="tajuk-tahap" class="text-xl md:text-2xl font-bold text-utama">Tahap 1: Lahn</h3>
+                            <span class="bg-emerald-100 text-utama font-bold px-4 py-1 rounded-full text-sm shadow-sm" id="papar-skor-ws">Skor: 0 / 20</span>
+                        </div>
+                        
+                        <div class="bg-blue-50 text-blue-800 text-xs md:text-sm p-3 rounded-lg mb-4 w-full text-center border border-blue-200 shadow-sm">
+                            <span class="font-bold">Cara Main:</span> <b>Klik huruf PERTAMA</b>, kemudian <b>Klik huruf TERAKHIR</b> perkataan.
+                        </div>
+
+                        <!-- Grid -->
+                        <div id="grid-container" class="grid grid-cols-12 gap-1 md:gap-1.5 w-full max-w-md mx-auto aspect-square bg-gray-100 p-2 md:p-3 rounded-xl border-2 border-gray-300 shadow-inner">
+                            <!-- Huruf akan dijana di sini melalui JavaScript -->
+                        </div>
                     </div>
 
-                    <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-8 leading-relaxed" id="teks-soalan">Memuatkan soalan...</h3>
-                    
-                    <div class="grid gap-4 w-full" id="bekas-pilihan">
-                        <!-- Pilihan jawapan dijana di sini -->
+                    <!-- Panel Sisi Kanan (Senarai Perkataan & Butang) -->
+                    <div class="w-full md:w-64 flex flex-col">
+                        <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 flex-1 shadow-sm">
+                            <h4 class="font-bold text-gray-800 border-b border-gray-300 pb-2 mb-3">Senarai Perkataan</h4>
+                            <ul id="senarai-perkataan" class="grid grid-cols-2 md:grid-cols-1 gap-x-4 gap-y-2 text-sm font-semibold text-gray-600">
+                                <!-- Perkataan dijana di sini -->
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-4 space-y-3">
+                            <button id="btn-seterusnya" onclick="seterusnyaWordSearch()" class="w-full bg-utama hover:bg-emerald-800 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-md hidden flex items-center justify-center gap-2">
+                                Seterusnya <span class="text-xl">👉</span>
+                            </button>
+                            <button id="btn-tamat-awal" onclick="tamatWordSearch()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 px-4 rounded-xl transition-all shadow-sm text-sm border border-red-200">
+                                Berputus Asa / Tamat Awal
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -372,8 +399,8 @@
                 <div id="keputusan-kuiz" class="hidden p-10 text-center">
                     <div id="ikon-keputusan" class="text-6xl mb-4">🏆</div>
                     <h2 class="text-3xl font-bold text-utama mb-2">Tahniah, <span id="papar-nama-keputusan">Pelajar</span>!</h2>
-                    <p class="text-xl text-gray-600 mb-6">Skor Akhir Anda:</p>
-                    <div class="text-6xl font-extrabold text-aksen mb-8"><span id="skor-akhir">0</span> / 15</div>
+                    <p class="text-xl text-gray-600 mb-6">Kata Kunci Dijumpai:</p>
+                    <div class="text-6xl font-extrabold text-aksen mb-8"><span id="skor-akhir">0</span> / 20</div>
                     <p id="mesej-keputusan" class="text-lg font-semibold text-gray-700 mb-8">Hebat! Anda memahami topik ini dengan cemerlang.</p>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -381,7 +408,7 @@
                             <span>📊</span> Muat Turun (Excel)
                         </button>
                         <button onclick="setSemulaKuiz()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-full transition-all shadow-md">
-                            Cuba Lagi
+                            Main Semula
                         </button>
                     </div>
                 </div>
@@ -402,7 +429,6 @@
 
                 <!-- Ruang Mesej -->
                 <div id="chatbox" class="flex-1 p-4 flex flex-col gap-4 bg-gray-50">
-                    <!-- Mesej aluan dari Ustaz AI -->
                     <div class="flex gap-3 max-w-[85%]">
                         <div class="w-8 h-8 rounded-full bg-utama flex items-center justify-center text-white text-sm flex-shrink-0">👳‍♂️</div>
                         <div class="msg-ai p-3 text-sm shadow-sm">
@@ -441,13 +467,13 @@
                                 <tr class="bg-emerald-50 text-utama border-b-2 border-emerald-200">
                                     <th class="py-3 px-4 font-bold">Bil</th>
                                     <th class="py-3 px-4 font-bold">Nama Pelajar</th>
-                                    <th class="py-3 px-4 font-bold text-center">Skor ( / 15 )</th>
+                                    <th class="py-3 px-4 font-bold text-center">Perkataan Jumpa ( / 20 )</th>
                                     <th class="py-3 px-4 font-bold">Tarikh & Masa</th>
                                 </tr>
                             </thead>
                             <tbody id="jadual-rekod-body">
                                 <tr id="baris-kosong">
-                                    <td colspan="4" class="py-8 text-center text-gray-500 italic">Belum ada rekod. Sila minta pelajar menjawab kuiz.</td>
+                                    <td colspan="4" class="py-8 text-center text-gray-500 italic">Belum ada rekod pelajar mencari perkataan.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -499,98 +525,28 @@
             document.getElementById('btn-' + idTab).classList.add('active');
         }
 
-        /* DATA DAN LOGIK KUIZ */
-        const koleksiSoalan = [
-            {
-                soalan: "Apakah yang dimaksudkan dengan Lahn secara bahasa?",
-                pilihan: ["Kecerdikan", "Kesalahan atau penyimpangan", "Kelajuan", "Kelunakan suara"],
-                jawapanBetul: 1
-            },
-            {
-                soalan: "Apakah yang dimaksudkan dengan Lahn Jali?",
-                pilihan: ["Kesalahan tersembunyi", "Kesalahan nyata yang jelas pada lafaz sehingga boleh mengubah makna", "Membaca Al-Quran dengan sangat laju", "Kesalahan meninggalkan dengung sahaja"],
-                jawapanBetul: 1
-            },
-            {
-                soalan: "Apakah hukum melakukan Lahn Jali secara sengaja?",
-                pilihan: ["Harus", "Makruh", "Haram dan berdosa", "Sunat diperbaiki"],
-                jawapanBetul: 2
-            },
-            {
-                soalan: "Seseorang membaca baris atas (Fathah) dengan baris depan (Dhammah) pada perkataan (أَنعَمتَ). Ini merupakan contoh...",
-                pilihan: ["Lahn Khafi", "Maratib Tartil", "Maratib Hadr", "Lahn Jali"],
-                jawapanBetul: 3
-            },
-            {
-                soalan: "Lahn Khafi bermaksud...",
-                pilihan: ["Kesalahan yang mencacatkan makna ayat", "Kesalahan menambah huruf", "Kesalahan kecil yang berlaku pada sebutan tanpa mengubah makna", "Tingkatan kelajuan membaca"],
-                jawapanBetul: 2
-            },
-            {
-                soalan: "Antara berikut, yang manakah merupakan contoh Lahn Khafi?",
-                pilihan: ["Menukar huruf 'Ha' pedas kepada 'Ha' simpul", "Meninggalkan sabdu pada huruf bersabdu", "Getaran yang berlebihan pada sebutan huruf Ra'", "Membuang huruf Mad sehingga bacaan jadi pendek"],
-                jawapanBetul: 2
-            },
-            {
-                soalan: "Hukum melakukan Lahn Khafi ketika membaca Al-Quran ialah:",
-                pilihan: ["Haram", "Makruh", "Wajib", "Harus"],
-                jawapanBetul: 1
-            },
-            {
-                soalan: "Apakah maksud Maratib Qiraat?",
-                pilihan: ["Jenis-jenis kesalahan bacaan", "Tingkatan kelajuan bacaan Al-Quran", "Hukum-hakam tajwid", "Cara melaungkan azan"],
-                jawapanBetul: 1
-            },
-            {
-                soalan: "Terdapat berapa tingkatan utama dalam Maratib Qiraat?",
-                pilihan: ["2 tingkatan", "3 tingkatan", "4 tingkatan", "5 tingkatan"],
-                jawapanBetul: 2
-            },
-            {
-                soalan: "Antara berikut, yang manakah susunan Maratib (kelajuan) dari yang PALING PERLAHAN kepada yang PALING CEPAT?",
-                pilihan: ["Tartil -> Tahqiq -> Hadr -> Tadwir", "Tahqiq -> Tartil -> Tadwir -> Hadr", "Hadr -> Tadwir -> Tartil -> Tahqiq", "Tadwir -> Tahqiq -> Tartil -> Hadr"],
-                jawapanBetul: 1
-            },
-            {
-                soalan: "Bacaan yang paling lambat, jelas, dan sesuai digunakan untuk mengajar/belajar Al-Quran dipanggil:",
-                pilihan: ["Tahqiq", "Tadwir", "Tartil", "Hadr"],
-                jawapanBetul: 0
-            },
-            {
-                soalan: "Tingkatan bacaan manakah yang diiktiraf sebagai BACAAN STANDARD dan paling sesuai untuk tadabbur (menghayati makna)?",
-                pilihan: ["Hadr", "Tadwir", "Tartil", "Tahqiq"],
-                jawapanBetul: 2
-            },
-            {
-                soalan: "Membaca Al-Quran dengan kelajuan yang sangat cepat untuk tujuan mengulang hafazan (murajaah) dipanggil sebagai tingkatan...",
-                pilihan: ["Tahqiq", "Tartil", "Tadwir", "Hadr"],
-                jawapanBetul: 3
-            },
-            {
-                soalan: "Imam solat sunat Tarawih biasanya membaca Al-Quran dengan kelajuan pertengahan antara Tartil dan Hadr. Tingkatan ini dinamakan:",
-                pilihan: ["Tahqiq", "Tartil", "Tadwir", "Hadr"],
-                jawapanBetul: 2
-            },
-            {
-                soalan: "Ahmad membaca Al-Quran, tetapi dia terlupa untuk mendengungkan bacaan (2 harakat) pada hukum Ikhfa'. Apakah jenis kesalahan yang dilakukan oleh Ahmad?",
-                pilihan: ["Lahn Jali", "Lahn Khafi", "Lahn Mutlaq", "Lahn Syadid"],
-                jawapanBetul: 1
-            }
-        ];
-
-        let indeksSoalanSemasa = 0;
+        /* LOGIK PERMAINAN WORD SEARCH */
+        const wordsLahn = ["JALI", "KHAFI", "HARAM", "MAKRUH", "BARIS", "HURUF", "SABDU", "MAKNA", "DENGUNG", "TAKRIR"];
+        const wordsMaratib = ["TAHQIQ", "TARTIL", "TADWIR", "HADR", "CEPAT", "LAMBAT", "TENANG", "BACAAN", "QIRAAT", "TAJWID"];
+        
+        const gridSize = 12;
+        let currentGrid = [];
+        let currentWords = [];
+        let foundWordsInLevel = [];
+        let tahapSemasa = 1; // 1 = Lahn, 2 = Maratib
+        
         let skor = 0;
         let namaPelajarSemasa = "";
+        let selPertama = null;
 
-        // Simulasi pangkalan data live (Array ringkas untuk tujuan paparan tanpa server sebenar)
         let rekodKeseluruhan = [];
 
         const uiSkrinMula = document.getElementById('mula-kuiz-skrin');
-        const uiSkrinKuiz = document.getElementById('soalan-kuiz-skrin');
+        const uiSkrinPermainan = document.getElementById('permainan-ws-skrin');
         const uiSkrinKeputusan = document.getElementById('keputusan-kuiz');
         const amaranNama = document.getElementById('amaran-nama');
 
-        function mulaKuiz() {
+        function mulaWordSearch() {
             const inputNama = document.getElementById('nama-pelajar').value.trim();
             if(inputNama === "") {
                 amaranNama.classList.remove('hidden');
@@ -601,70 +557,206 @@
             namaPelajarSemasa = inputNama;
             
             uiSkrinMula.classList.add('hidden');
-            uiSkrinKuiz.classList.remove('hidden');
-            uiSkrinKuiz.classList.add('flex');
-            indeksSoalanSemasa = 0;
+            uiSkrinPermainan.classList.remove('hidden');
+            uiSkrinPermainan.classList.add('flex');
+            
+            tahapSemasa = 1;
             skor = 0;
-            paparSoalan();
+            kemaskiniSkorUI();
+            binaTahap();
         }
 
-        function paparSoalan() {
-            const soalanKini = koleksiSoalan[indeksSoalanSemasa];
-            document.getElementById('teks-soalan').innerText = soalanKini.soalan;
-            document.getElementById('papar-soalan-ke').innerText = `Soalan ${indeksSoalanSemasa + 1} / 15`;
-            document.getElementById('papar-skor').innerText = `Skor: ${skor}`;
+        function binaTahap() {
+            selPertama = null;
+            document.getElementById('btn-seterusnya').classList.add('hidden');
+            document.getElementById('btn-tamat-awal').classList.remove('hidden');
+            foundWordsInLevel = [];
             
-            const peratus = ((indeksSoalanSemasa) / 15) * 100;
-            document.getElementById('progress-bar').style.width = `${peratus}%`;
+            if (tahapSemasa === 1) {
+                document.getElementById('tajuk-tahap').innerText = "Tahap 1: Lahn Jali & Khafi";
+                currentWords = [...wordsLahn];
+            } else {
+                document.getElementById('tajuk-tahap').innerText = "Tahap 2: Maratib Qiraat";
+                currentWords = [...wordsMaratib];
+                document.getElementById('btn-seterusnya').innerHTML = `Hantar Markah <span>🏆</span>`;
+            }
+            
+            currentGrid = janaGrid(currentWords, gridSize);
+            lukisGrid();
+            lukisSenaraiPerkataan();
+        }
 
-            const bekasPilihan = document.getElementById('bekas-pilihan');
-            bekasPilihan.innerHTML = ''; // Kosongkan pilihan lama
+        function janaGrid(senaraiPerkataan, saiz) {
+            let grid = Array(saiz).fill(null).map(() => Array(saiz).fill(''));
+            const arah = [
+                [0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [-1, -1], [-1, 1], [1, -1] 
+            ];
 
-            soalanKini.pilihan.forEach((pilihan, index) => {
-                const butang = document.createElement('button');
-                butang.className = "w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-utama hover:bg-emerald-50 transition-all font-medium text-gray-700 focus:outline-none";
-                butang.innerText = pilihan;
-                butang.onclick = () => semakJawapan(index, butang);
-                bekasPilihan.appendChild(butang);
+            for (let perkataan of senaraiPerkataan) {
+                let berjayaLetak = false;
+                let cubaan = 0;
+                
+                while (!berjayaLetak && cubaan < 500) {
+                    cubaan++;
+                    let dir = arah[Math.floor(Math.random() * arah.length)];
+                    let r = Math.floor(Math.random() * saiz);
+                    let c = Math.floor(Math.random() * saiz);
+
+                    let hujungR = r + dir[0] * (perkataan.length - 1);
+                    let hujungC = c + dir[1] * (perkataan.length - 1);
+
+                    if (hujungR >= 0 && hujungR < saiz && hujungC >= 0 && hujungC < saiz) {
+                        let muat = true;
+                        for (let i = 0; i < perkataan.length; i++) {
+                            let currR = r + dir[0] * i;
+                            let currC = c + dir[1] * i;
+                            if (grid[currR][currC] !== '' && grid[currR][currC] !== perkataan[i]) {
+                                muat = false;
+                                break;
+                            }
+                        }
+                        if (muat) {
+                            for (let i = 0; i < perkataan.length; i++) {
+                                let currR = r + dir[0] * i;
+                                let currC = c + dir[1] * i;
+                                grid[currR][currC] = perkataan[i];
+                            }
+                            berjayaLetak = true;
+                        }
+                    }
+                }
+            }
+
+            const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for (let r = 0; r < saiz; r++) {
+                for (let c = 0; c < saiz; c++) {
+                    if (grid[r][c] === '') {
+                        grid[r][c] = abjad.charAt(Math.floor(Math.random() * abjad.length));
+                    }
+                }
+            }
+            return grid;
+        }
+
+        function lukisGrid() {
+            const bekas = document.getElementById('grid-container');
+            bekas.innerHTML = '';
+            
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    let div = document.createElement('div');
+                    div.className = "ws-cell bg-white border border-gray-200 rounded-md flex items-center justify-center font-bold text-gray-800 text-sm md:text-base";
+                    div.innerText = currentGrid[r][c];
+                    div.onclick = () => tekanSel(r, c, div);
+                    bekas.appendChild(div);
+                }
+            }
+        }
+
+        function tekanSel(r, c, elemen) {
+            if (elemen.classList.contains('found')) return;
+
+            if (!selPertama) {
+                selPertama = { r, c, el: elemen };
+                elemen.classList.add('selected');
+            } else {
+                let r1 = selPertama.r, c1 = selPertama.c;
+                let r2 = r, c2 = c;
+                
+                let dr = r2 - r1;
+                let dc = c2 - c1;
+                let maxSteps = Math.max(Math.abs(dr), Math.abs(dc));
+                
+                if (maxSteps === 0) {
+                    selPertama.el.classList.remove('selected');
+                    selPertama = null;
+                    return;
+                }
+                
+                if (Math.abs(dr) !== 0 && Math.abs(dc) !== 0 && Math.abs(dr) !== Math.abs(dc)) {
+                    selPertama.el.classList.remove('selected');
+                    selPertama = { r, c, el: elemen }; 
+                    elemen.classList.add('selected');
+                    return;
+                }
+                
+                let stepR = dr === 0 ? 0 : dr / Math.abs(dr);
+                let stepC = dc === 0 ? 0 : dc / Math.abs(dc);
+                let perkataanDibentuk = "";
+                let laluan = [];
+                
+                for (let i = 0; i <= maxSteps; i++) {
+                    let curR = r1 + i * stepR;
+                    let curC = c1 + i * stepC;
+                    perkataanDibentuk += currentGrid[curR][curC];
+                    laluan.push({r: curR, c: curC});
+                }
+                
+                semakPerkataanDitemui(perkataanDibentuk, laluan);
+                
+                selPertama.el.classList.remove('selected');
+                selPertama = null;
+            }
+        }
+
+        function semakPerkataanDitemui(perkataan, laluan) {
+            const perkataanReverse = perkataan.split('').reverse().join('');
+            let ditemui = false;
+            let perkataanTepat = "";
+
+            if (currentWords.includes(perkataan) && !foundWordsInLevel.includes(perkataan)) {
+                ditemui = true;
+                perkataanTepat = perkataan;
+            } else if (currentWords.includes(perkataanReverse) && !foundWordsInLevel.includes(perkataanReverse)) {
+                ditemui = true;
+                perkataanTepat = perkataanReverse;
+            }
+            
+            if (ditemui) {
+                foundWordsInLevel.push(perkataanTepat);
+                skor++;
+                kemaskiniSkorUI();
+                
+                const semuaSel = document.querySelectorAll('.ws-cell');
+                laluan.forEach(koordinat => {
+                    let indeks = koordinat.r * gridSize + koordinat.c;
+                    semuaSel[indeks].classList.add('found');
+                });
+                
+                document.getElementById('word-' + perkataanTepat).classList.add('found');
+                document.getElementById('word-' + perkataanTepat).innerText += " ✔";
+                
+                if (foundWordsInLevel.length === currentWords.length) {
+                    document.getElementById('btn-seterusnya').classList.remove('hidden');
+                    document.getElementById('btn-tamat-awal').classList.add('hidden');
+                }
+            }
+        }
+
+        function lukisSenaraiPerkataan() {
+            const ul = document.getElementById('senarai-perkataan');
+            ul.innerHTML = '';
+            currentWords.forEach(word => {
+                let li = document.createElement('li');
+                li.id = 'word-' + word;
+                li.className = "word-list-item px-2 py-1 bg-white rounded border border-gray-100 flex items-center gap-2 before:content-['•'] before:text-utama text-gray-800";
+                li.innerText = word;
+                ul.appendChild(li);
             });
         }
 
-        function semakJawapan(indexDipilih, butangDitekan) {
-            const soalanKini = koleksiSoalan[indeksSoalanSemasa];
-            const semuaButang = document.getElementById('bekas-pilihan').querySelectorAll('button');
-            
-            semuaButang.forEach(btn => btn.disabled = true); // Disable all buttons
-
-            if (indexDipilih === soalanKini.jawapanBetul) {
-                skor++;
-                butangDitekan.classList.replace('border-gray-200', 'border-green-500');
-                butangDitekan.classList.replace('hover:bg-emerald-50', 'bg-green-100');
-                butangDitekan.classList.add('text-green-800');
+        function seterusnyaWordSearch() {
+            if (tahapSemasa === 1) {
+                tahapSemasa = 2;
+                binaTahap();
             } else {
-                butangDitekan.classList.replace('border-gray-200', 'border-red-500');
-                butangDitekan.classList.replace('hover:bg-emerald-50', 'bg-red-100');
-                butangDitekan.classList.add('text-red-800');
-                
-                // Tunjuk jawapan betul
-                semuaButang[soalanKini.jawapanBetul].classList.replace('border-gray-200', 'border-green-500');
-                semuaButang[soalanKini.jawapanBetul].classList.add('bg-green-100', 'text-green-800');
+                tamatWordSearch();
             }
-
-            document.getElementById('papar-skor').innerText = `Skor: ${skor}`;
-
-            setTimeout(() => {
-                indeksSoalanSemasa++;
-                if (indeksSoalanSemasa < koleksiSoalan.length) {
-                    paparSoalan();
-                } else {
-                    tamatKuiz();
-                }
-            }, 1000);
         }
 
-        function tamatKuiz() {
-            uiSkrinKuiz.classList.add('hidden');
-            uiSkrinKuiz.classList.remove('flex');
+        function tamatWordSearch() {
+            uiSkrinPermainan.classList.add('hidden');
+            uiSkrinPermainan.classList.remove('flex');
             uiSkrinKeputusan.classList.remove('hidden');
 
             document.getElementById('skor-akhir').innerText = skor;
@@ -673,21 +765,20 @@
             const mesejEl = document.getElementById('mesej-keputusan');
             const ikonEl = document.getElementById('ikon-keputusan');
             
-            if (skor === 15) {
-                mesejEl.innerText = "Sempurna! Anda seorang pakar Tajwid & Maharat yang sebenar!";
+            if (skor === 20) {
+                mesejEl.innerText = "Sempurna! Mata anda setajam helang, anda pakar Tajwid sebenar!";
                 mesejEl.className = "text-lg font-semibold text-green-600 mb-8";
                 ikonEl.innerText = "🌟";
             } else if (skor >= 10) {
-                mesejEl.innerText = "Bagus! Pemahaman yang amat baik. Anda boleh ulang kaji lagi untuk skor penuh.";
+                mesejEl.innerText = "Bagus! Anda berjaya menemui banyak perkataan tersembunyi.";
                 mesejEl.className = "text-lg font-semibold text-utama mb-8";
                 ikonEl.innerText = "👍";
             } else {
-                mesejEl.innerText = "Jangan putus asa. Sila baca nota di tab sebelah dan cuba lagi!";
+                mesejEl.innerText = "Jangan putus asa, cabaran ini memang menguji ketajaman mata!";
                 mesejEl.className = "text-lg font-semibold text-amber-600 mb-8";
-                ikonEl.innerText = "📚";
+                ikonEl.innerText = "👀";
             }
 
-            // Hantar data ke pangkalan data "Live"
             const tarikhSemasa = new Date().toLocaleString('ms-MY');
             const rekodBaru = {
                 nama: namaPelajarSemasa,
@@ -702,7 +793,11 @@
         function setSemulaKuiz() {
             uiSkrinKeputusan.classList.add('hidden');
             uiSkrinMula.classList.remove('hidden');
-            document.getElementById('nama-pelajar').value = ""; // Kosongkan nama
+            document.getElementById('nama-pelajar').value = ""; 
+        }
+
+        function kemaskiniSkorUI() {
+            document.getElementById('papar-skor-ws').innerText = `Skor: ${skor} / 20`;
         }
 
         function kemaskiniJadualGuru() {
@@ -713,7 +808,6 @@
                 if (barisKosong) barisKosong.remove();
             }
 
-            // Hanya tambah baris terkini
             const rekod = rekodKeseluruhan[rekodKeseluruhan.length - 1];
             const indeks = rekodKeseluruhan.length;
             
@@ -722,7 +816,7 @@
             tr.innerHTML = `
                 <td class="py-3 px-4">${indeks}</td>
                 <td class="py-3 px-4 font-medium text-gray-800">${rekod.nama}</td>
-                <td class="py-3 px-4 text-center font-bold ${rekod.skor >= 10 ? 'text-green-600' : 'text-amber-600'}">${rekod.skor}</td>
+                <td class="py-3 px-4 text-center font-bold ${rekod.skor >= 15 ? 'text-green-600' : 'text-amber-600'}">${rekod.skor}</td>
                 <td class="py-3 px-4 text-sm text-gray-500">${rekod.tarikh}</td>
             `;
             jadualBody.appendChild(tr);
@@ -730,17 +824,16 @@
 
         function muatTurunKeputusanIndividu() {
             const tarikhSemasa = new Date().toLocaleString('ms-MY').replace(/,/g, '');
-            let csvContent = "\uFEFFNama Pelajar,Skor,Jumlah Soalan,Tarikh & Masa\n";
-            csvContent += `"${namaPelajarSemasa}",${skor},15,"${tarikhSemasa}"\n`;
+            let csvContent = "\uFEFFNama Pelajar,Perkataan Dijumpai,Jumlah Perkataan,Tarikh & Masa\n";
+            csvContent += `"${namaPelajarSemasa}",${skor},20,"${tarikhSemasa}"\n`;
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             
-            // Format nama fail: Keputusan_Kuiz_Nama_Pelajar.csv
             const namaFailSafe = namaPelajarSemasa.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             link.setAttribute("href", url);
-            link.setAttribute("download", `Keputusan_Kuiz_${namaFailSafe}.csv`);
+            link.setAttribute("download", `Cari_Perkataan_${namaFailSafe}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
@@ -753,22 +846,23 @@
                 return;
             }
 
-            let csvContent = "\uFEFFBil,Nama Pelajar,Skor,Jumlah Soalan,Tarikh\n";
+            let csvContent = "\uFEFFBil,Nama Pelajar,Perkataan Dijumpai,Jumlah Perkataan,Tarikh\n";
             rekodKeseluruhan.forEach((rekod, index) => {
-                csvContent += `${index + 1},"${rekod.nama}",${rekod.skor},15,"${rekod.tarikh}"\n`;
+                csvContent += `${index + 1},"${rekod.nama}",${rekod.skor},20,"${rekod.tarikh}"\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", `Rekod_Keseluruhan_Kuiz_Lahn.csv`);
+            link.setAttribute("download", `Rekod_Keseluruhan_WordSearch.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
+        /* FUNGSI CHAT AI USTAZ 'AKASHAH */
         function handleEnter(e) {
             if (e.key === 'Enter') {
                 hantarMesej();
@@ -787,12 +881,10 @@
             const mesejLoadingID = paparMesejLoading();
             
             try {
-                // Konfigurasi sistem prompt untuk Ustaz AI
                 const systemPrompt = "Anda adalah Ustaz 'Akashah AI, seorang guru Pendidikan Islam mesra di Malaysia. Anda pakar dalam ilmu Tajwid KSSM Tingkatan 1, khususnya topik Lahn (Jali & Khafi) dan Maratib Qiraat. Jawab dengan ringkas (maksimum 3 ayat), mesra, dan gunakan gaya bahasa ustaz berbual dengan pelajar (gunakan ganti nama 'ustaz').";
                 
                 setTimeout(() => {
                     buangLoading(mesejLoadingID);
-                    // Simulasi respons AI
                     let jawapanSimulasi = "Alhamdulillah, soalan yang bagus! Lahn Jali ialah kesalahan besar yang mengubah makna, contohnya menukar baris atas kepada baris depan. Manakala Lahn Khafi pula kesalahan kecil yang tak ubah makna, contohnya tertinggal dengung. Jelas tak setakat ni?";
                     
                     if(teks.toLowerCase().includes("maratib") || teks.toLowerCase().includes("kelajuan")) {
