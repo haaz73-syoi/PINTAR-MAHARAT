@@ -495,7 +495,7 @@
                     <div class="flex gap-3 max-w-[85%]">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-utama to-emerald-500 flex items-center justify-center text-white text-lg flex-shrink-0 shadow-md">👳‍♂️</div>
                         <div class="msg-ai p-4 text-sm md:text-base shadow-sm chat-bubble">
-                            Assalamualaikum kumpulan detektif! Ustaz di sini. Kalau kamu tersangkut masa siasat Ujian Detektif Lahn tu, tanya je ustaz kat sini, ustaz akan bagi clue. Taip kata kunci atau ayat arab dari soalan tu.
+                            Assalamualaikum kumpulan detektif! Ustaz di sini. Kalau kamu tersangkut masa siasat Ujian Detektif Lahn tu, tanya je ustaz kat sini, ustaz akan bagi clue. Taip kata kunci (cth: pertandingan, juri, bot laju) atau ayat arab dari soalan tu.
                         </div>
                     </div>
                 </div>
@@ -596,7 +596,7 @@
                     localStorage.setItem('rekod_kuiz_maharat', JSON.stringify(window.rekodKeseluruhan));
                     window.kemaskiniJadualGuru();
                 }, (error) => {
-                    console.warn("Gagal baca awan. Menukar ke mod Local Storage.");
+                    console.warn("Gagal baca awan (Permissions). Menukar ke mod Local Storage Backup.");
                     pangkalanDataAktif = false; 
                 });
             } catch (err) {}
@@ -632,18 +632,18 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* --- DETEKTIF LAHN --- */
+        /* --- DETEKTIF LAHN (BANK SOALAN KBAT / PANJANG) --- */
         const bankSoalanSenario = [
-            { soalan: "Semasa tasmik, kumpulan anda terdengar Ahmad membaca firman Allah (أَنعَمتَ) dengan sebutan (أَنعَمتُ). Sebagai detektif, klasifikasikan fail kes ini.", pilihan: ["Lahn Jali (Menukar Baris)", "Lahn Khafi (Menukar Baris)", "Lahn Jali (Menambah Huruf)", "Lahn Khafi (Sifat Huruf)"], jawapanBetul: 0 },
-            { soalan: "Fail Kes #202: Fatimah didapati bersalah kerana membaca kalimah (عَصَى) sebagai (عَسَى). Apakah hukum perbuatan ini jika dilakukan secara sengaja?", pilihan: ["Makruh", "Harus", "Haram", "Sunat"], jawapanBetul: 2 },
-            { soalan: "Fail Kes #303: Abu membaca (وَلَا الضَّالِّينَ) dengan memendekkan bacaan kepada 2 harakat sahaja (sepatutnya mad lazim). Apakah klasifikasi kesalahan beliau?", pilihan: ["Lahn Jali", "Lahn Khafi", "Lahn Nyata", "Lahn Berat"], jawapanBetul: 1 },
-            { soalan: "Suspek membaca kalimah (مِن قَبْلِ) dengan terang di bibir tanpa membunyikan dengung Ikhfa' di hidung. Suspek dituduh melakukan kesalahan Lahn Khafi. Apakah hukum kesalahannya?", pilihan: ["Haram", "Sunat", "Mubah", "Makruh"], jawapanBetul: 3 },
-            { soalan: "Pita bukti: Siti membaca kalimah (لَأَذْبَحَنَّهُ) menjadi (لَا أَذْبَحَنَّهُ). Kes ini sangat berat. Apakah nama spesifik bagi kesalahan (jenayah) yang dilakukannya?", pilihan: ["Lahn Jali (Menambah Huruf)", "Lahn Khafi (Menambah Huruf)", "Lahn Jali (Mengurang Huruf)", "Lahn Khafi (Menukar Huruf)"], jawapanBetul: 0 },
-            { soalan: "Seorang pembaca telah melajukan sebutan (وَلَا أَنتُمْ) menjadi (وَلَ أَنتُمْ). Sebagai detektif tajwid, di bawah fail apakah anda akan mendaftarkan kes ini?", pilihan: ["Lahn Khafi (Mengurang Huruf)", "Lahn Jali (Mengurang Huruf)", "Lahn Jali (Menukar Baris)", "Lahn Khafi (Dengung)"], jawapanBetul: 1 },
-            { soalan: "🧩 Teka-teki Detektif: 'Jika kamu berani menukar, menambah, atau mengurangkan hurufku, ketahuilah bahawa makna ayat Tuhan akan rosak. Hukumku adalah Haram.' Siapakah saya?", pilihan: ["Lahn Khafi", "Lahn Jali", "Maratib Qiraat", "Hukum Tajwid"], jawapanBetul: 1 },
-            { soalan: "🧩 Teka-teki Detektif: 'Lidah suspek sering bergetar melampau ketika menyebutku, bagaikan enjin bot laju. Walau makna ayat selamat, kualitinya tetap tercemar.' Kes apakah ini?", pilihan: ["Lahn Jali (Tukar Huruf)", "Lahn Khafi (Takrir Ra')", "Lahn Khafi (Dengung)", "Lahn Jali (Sabdu)"], jawapanBetul: 1 },
-            { soalan: "🧩 Teka-teki Detektif: 'Saya bijak bersembunyi di balik hukum tajwid. Orang awam mungkin tak perasan, tapi Detektif Tajwid pasti menangkap saya. Siapakah saya?'", pilihan: ["Lahn Terang", "Lahn Jali", "Lahn Nyata", "Lahn Khafi"], jawapanBetul: 3 },
-            { soalan: "🧩 Teka-teki Detektif: 'Saya berlaku bila kamu tidak adil pada bunyi huruf. Yang patut tebal dinipiskan, yang patut nipis ditebalkan. Di rak manakah fail kes saya diletakkan?'", pilihan: ["Lahn Jali (Tukar Baris)", "Lahn Khafi (Sifat Huruf)", "Lahn Khafi (Tinggal Mad)", "Lahn Jali (Kurang Huruf)"], jawapanBetul: 1 }
+            { soalan: "Dalam satu pertandingan tilawah peringkat sekolah, peserta nombor giliran 3 telah membaca surah Al-Fatihah dengan begitu merdu. Namun, apabila tiba pada ayat ketujuh, juri hakim menegur kerana beliau membaca kalimah (أَنعَمتَ) dengan sebutan (أَنعَمتُ). Sebagai seorang detektif tajwid yang peka, apakah klasifikasi kes ini dan mengapa juri memotong markah yang sangat besar?", pilihan: ["Lahn Jali - kerana menukar baris yang mengubah makna ayat", "Lahn Khafi - kerana menukar baris yang tidak mengubah makna", "Lahn Jali - kerana mengurangkan huruf", "Lahn Khafi - kerana kesalahan pada sifat huruf"], jawapanBetul: 0 },
+            { soalan: "Fail Kes #202: Berlaku satu insiden di surau ketika solat Maghrib. Imam didapati tersilap menyebut huruf 'Sod' menjadi 'Sin' ketika membaca kalimah (عَصَى) yang membawa maksud menderhaka, lantas menukarkannya menjadi (عَسَى) yang bermaksud mudah-mudahan. Sekiranya ini dilakukan secara sengaja kerana malas membetulkan sebutan makhraj, apakah hukum bagi perbuatan ini dan jenis lahn yang terlibat?", pilihan: ["Haram (Lahn Jali)", "Makruh (Lahn Khafi)", "Harus (Lahn Jali)", "Sunat (Lahn Khafi)"], jawapanBetul: 0 },
+            { soalan: "Semasa sesi tadarus Al-Quran sempena bulan Ramadan, kawan baik anda, Abu telah membaca (وَلَا الضَّالِّينَ) dengan memendekkan bacaan kepada 2 harakat sahaja kerana mengejar masa untuk berbuka puasa, sedangkan hukum asalnya wajib dibaca 6 harakat (Mad Lazim). Adakah tindakan Abu ini merosakkan maksud keseluruhan ayat tersebut dan apakah jenis Lahn yang dilakukan?", pilihan: ["Makna berubah sepenuhnya (Lahn Jali)", "Makna tidak berubah, hanya cacat tajwid (Lahn Khafi)", "Bacaan terbatal dan wajib diulang (Lahn Nyata)", "Makna ayat menjadi terbalik (Lahn Berat)"], jawapanBetul: 1 },
+            { soalan: "Pasukan penyiasat anda dipanggil untuk meneliti satu rakaman audio. Suspek didapati membaca kalimah (مِن قَبْلِ) dengan terang di bibir (sebutan Izhar) tanpa membunyikan sebarang dengung Ikhfa' di rongga hidungnya. Selepas perbincangan meja bulat, suspek dituduh melakukan kesalahan Lahn Khafi. Apakah impak kesalahan ini kepada bacaan tersebut?", pilihan: ["Merosakkan keindahan bacaan dan hukumnya Makruh", "Merosakkan makna ayat dan hukumnya Haram", "Mengubah struktur kalimah Al-Quran", "Tiada kesan kerana dengung adalah sunat"], jawapanBetul: 0 },
+            { soalan: "Pita bukti #505: Kumpulan anda sedang menyemak bacaan surah An-Naml. Siti dengan yakinnya telah memanjangkan bunyi 'Lam' pada kalimah (لَأَذْبَحَنَّهُ) yang bermaksud 'pasti aku menyembelihnya', menjadikannya (لَا أَذْبَحَنَّهُ) yang bermaksud 'TIDAK aku menyembelihnya'. Ini adalah jenayah tajwid yang sangat berat! Apakah nama spesifik bagi kesalahan yang telah mengubah makna ini?", pilihan: ["Lahn Jali (Kesalahan Menambah Huruf)", "Lahn Khafi (Kesalahan Menambah Huruf)", "Lahn Jali (Kesalahan Mengurangkan Huruf)", "Lahn Khafi (Kesalahan Menukar Huruf)"], jawapanBetul: 0 },
+            { soalan: "Seorang pembaca telah melajukan bacaannya sehingga 'tergugur' huruf Alif mad pada kalimah (وَلَا أَنتُمْ). Akibatnya, sebutannya menjadi (وَلَ أَنتُمْ). Kesilapan yang nampak kecil ini sebenarnya telah menukar maksud daripada 'Dan BUKANLAH kamu' kepada 'Dan BAGI kamu'. Sebagai ketua penyiasat tajwid, apakah label fail yang akan anda gunakan untuk menyimpan kes ini?", pilihan: ["Kesalahan Mengurang Huruf (Lahn Khafi)", "Kesalahan Mengurang Huruf (Lahn Jali)", "Kesalahan Menukar Baris (Lahn Jali)", "Kesalahan Meninggalkan Dengung (Lahn Khafi)"], jawapanBetul: 1 },
+            { soalan: "🧩 Teka-teki Detektif Tahap Tinggi: 'Saya adalah musuh utama dalam pembacaan kitab suci. Jika anda leka lalu terperangkap dalam tipu daya saya—samada menukar, menambah, atau mengurangkan hurufku—ketahuilah bahawa makna kalam Tuhan akan rosak sama sekali. Para ulama sepakat menjatuhkan hukuman Haram ke atas sesiapa yang sengaja melakukannya.' Siapakah entiti yang dimaksudkan ini?", pilihan: ["Lahn Khafi", "Lahn Jali", "Maratib Qiraat", "Sifatul Huruf"], jawapanBetul: 1 },
+            { soalan: "🧩 Teka-teki Detektif Tahap Tinggi: 'Setiap kali suspek menyebut nama saya, hujung lidahnya bergetar dengan sangat melampau, seolah-olah seperti bunyi deruman enjin bot laju di tengah lautan. Walaupun makna ayat tidak tersasar dan selamat, namun kualiti bacaannya telah tercemar teruk.' Apakah jenis kesalahan yang sedang disiasat ini?", pilihan: ["Lahn Jali (Kesalahan Menukar Huruf)", "Lahn Khafi (Kesalahan Takrir huruf Ra')", "Lahn Khafi (Kesalahan Tinggal Dengung)", "Lahn Jali (Kesalahan Menambah Sabdu)"], jawapanBetul: 1 },
+            { soalan: "🧩 Teka-teki Detektif Tahap Tinggi: 'Saya sangat licik dan bijak bersembunyi di sebalik tirai hukum-hakam tajwid. Golongan awam atau orang biasa yang mendengar bacaan Al-Quran mungkin tidak akan perasan kehadiran saya. Namun, bagi Detektif Tajwid yang mahir, saya pasti akan tertangkap kerana saya mencacatkan kesempurnaan bacaan.' Siapakah saya?", pilihan: ["Kesalahan Lahn Terang", "Kesalahan Lahn Jali", "Kesalahan Maratib Hadr", "Kesalahan Lahn Khafi"], jawapanBetul: 3 },
+            { soalan: "🧩 Teka-teki Detektif Tahap Tinggi: 'Jenayah saya berlaku apabila anda bersikap tidak adil pada bunyi huruf. Huruf Isti'la yang sepatutnya dibaca tebal, anda nipiskan. Huruf yang sepatutnya nipis, anda tebalkan bunyinya dengan angkuh. Walaupun makna ayat tidak berubah, keaslian tajwid telah diragut.' Di rak manakah fail kes penyiasatan saya ini diletakkan?", pilihan: ["Lahn Jali (Menukar Baris / Harakat)", "Lahn Khafi (Kesalahan Sifat Huruf)", "Lahn Khafi (Meninggalkan Harakat Mad)", "Lahn Jali (Mengurangkan Huruf)"], jawapanBetul: 1 }
         ];
 
         let soalanSesiIni = [];
@@ -718,7 +718,7 @@
                 indeksSoalanSemasa++;
                 if (indeksSoalanSemasa < soalanSesiIni.length) paparSoalanSenario();
                 else tamatSenario();
-            }, 1800);
+            }, 2500); // Dilewatkan sedikit untuk bacaan kerana teks panjang
         }
 
         function tamatSenario() {
@@ -942,7 +942,7 @@
             link.download = `Laporan_Maharat_Kumpulan.csv`; link.click();
         }
 
-        /* --- CHAT AI USTAZ AKASHAH --- */
+        /* --- CHAT AI USTAZ AKASHAH (KEMASKINI KOSA KATA) --- */
         function handleEnter(e) { if (e.key === 'Enter') hantarMesej(); }
 
         function hantarMesej() {
@@ -960,17 +960,17 @@
         }
 
         function analisisSoalanPelajar(t) {
-            if (t.includes('أَنعَمتَ') || t.includes('أنعمت') || t.includes('tukar baris')) return "💡 **Klu Detektif:** Kalau baris atas (Ta) ditukar ke baris depan (Tu), adakah huruf bertambah atau cuma baris berubah? Perubahan ini mengubah makna 100%, jadi ia **Lahn Jali**.";
-            if (t.includes('عَصَى') || t.includes('عَسَى') || t.includes('fatimah')) return "💡 **Klu Detektif:** Ada perbezaan besar antara huruf 'Sod' dan 'Sin'. Tertukar huruf = maksud lari. Rujuk nota Lahn Jali 'Menukar Huruf'.";
-            if (t.includes('ضَّالِّينَ') || t.includes('pendek')) return "💡 **Klu Detektif:** Memendekkan mad lazim mencederakan tajwid tapi TIDAK ubah makna. Kalau tak ubah makna, ia **Lahn Khafi**.";
-            if (t.includes('مِن قَبْلِ') || t.includes('من قبل') || t.includes('dengung')) return "💡 **Klu Detektif:** Tinggal dengung Ikhfa' adalah **Lahn Khafi**. Hukum melakukannya adalah makruh.";
-            if (t.includes('أَذْبَحَنَّهُ') || t.includes('tambah')) return "💡 **Klu Detektif:** Ditambah huruf Alif jadi 'Laa' (tidak). Penambahan huruf ubah makna total = **Lahn Jali**.";
-            if (t.includes('أَنتُمْ') || t.includes('أنتم') || t.includes('laju')) return "💡 **Klu Detektif:** Suspek buang huruf 'Alif mad' sebab laju. Mengurangkan huruf = **Lahn Jali**.";
-            if (t.includes('haram') || t.includes('musnah')) return "💡 **Klu Teka-Teki:** Kesalahan ini nyata/jelas (Jali) kerana ia merosakkan makna firman Tuhan.";
-            if (t.includes('bot laju') || t.includes('getar')) return "💡 **Klu Teka-Teki:** Sifat lidah bergetar ialah 'Takrir' bagi huruf Ra'. Getaran melampau adalah **Lahn Khafi**.";
-            if (t.includes('sembunyi') || t.includes('awam')) return "💡 **Klu Teka-Teki:** Perkataan Arab bagi tersembunyi ialah Khafi.";
-            if (t.includes('tebal') || t.includes('nipis') || t.includes('adil')) return "💡 **Klu Teka-Teki:** Ini melibatkan 'Sifat Huruf'. Tidak menyebut ketebalan sempurna tidak ubah makna, jadi ia **Lahn Khafi**.";
-            return "Kumpulan detektif, sila masukkan kata kunci yang tepat dari fail kes, contohnya kalimah Arab atau perkataan seperti 'getar', 'tebal', atau 'pendek'. Ustaz akan berikan klu yang spesifik!";
+            if (t.includes('أَنعَمتَ') || t.includes('أنعمت') || t.includes('pertandingan') || t.includes('juri')) return "💡 **Klu Detektif:** Juri potong markah sebab bacaan itu tertukar baris atas (Ta) ke depan (Tu). Adakah ia menukar maksud? Ya, 100%! Ini confirm **Lahn Jali**.";
+            if (t.includes('عَصَى') || t.includes('عَسَى') || t.includes('imam') || t.includes('maghrib')) return "💡 **Klu Detektif:** Kes ini libatkan perbezaan huruf 'Sod' dan 'Sin'. Tertukar huruf = maksud lari. Rujuk fail nota Lahn Jali (Menukar Huruf).";
+            if (t.includes('ضَّالِّينَ') || t.includes('pendek') || t.includes('tadarus') || t.includes('ramadan')) return "💡 **Klu Detektif:** Memendekkan hukum mad lazim mencacatkan kualiti tajwid tetapi TIDAK mengubah maksud ayat. Kesalahan yang tiada kaitan dengan makna adalah **Lahn Khafi**.";
+            if (t.includes('مِن قَبْلِ') || t.includes('من قبل') || t.includes('rakaman') || t.includes('audio')) return "💡 **Klu Detektif:** Tinggal dengung Ikhfa' hakiki adalah jenayah tajwid kategori **Lahn Khafi**. Hukum melakukannya cuma makruh kerana maksud ayat masih selamat.";
+            if (t.includes('أَذْبَحَنَّهُ') || t.includes('tambah') || t.includes('pita bukti') || t.includes('siti')) return "💡 **Klu Detektif:** Kalau dengar betul-betul, ada Alif ditambah selepas huruf Lam. Penambahan huruf yang menyebabkan makna bertukar 360 darjah begini adalah **Lahn Jali**.";
+            if (t.includes('أَنتُمْ') || t.includes('أنتم') || t.includes('laju') || t.includes('tergugur')) return "💡 **Klu Detektif:** Suspek buang huruf 'Alif mad' masa baca laju. Apabila huruf alif hilang, ia kategori kesalahan mengurangkan huruf = **Lahn Jali**.";
+            if (t.includes('haram') || t.includes('musnah') || t.includes('tipu daya')) return "💡 **Klu Teka-Teki:** Kesalahan ini nyata dan mengubah struktur bahasa Arab firman Tuhan. Hukumnya haram. Cari jawapan yang berkaitan Lahn Jali.";
+            if (t.includes('bot laju') || t.includes('getar') || t.includes('lautan')) return "💡 **Klu Teka-Teki:** Sifat lidah bergetar ialah sifat 'Takrir' bagi sebutan huruf Ra'. Getaran teruk tanpa rosakkan makna adalah **Lahn Khafi**.";
+            if (t.includes('sembunyi') || t.includes('awam') || t.includes('licik')) return "💡 **Klu Teka-Teki:** Perkataan bahasa Arab bagi 'tersembunyi' ialah Khafi. Ia hanya nampak pada pandangan mata detektif tajwid!";
+            if (t.includes('tebal') || t.includes('nipis') || t.includes('adil') || t.includes('angkuh')) return "💡 **Klu Teka-Teki:** Ini melibatkan manipulasi 'Sifat Huruf'. Tidak menepati sifat tebal/nipis tidak akan mengubah makna, bermakna ia adalah **Lahn Khafi**.";
+            return "Kumpulan detektif, sila masukkan kata kunci yang tepat dari fail kes, contohnya kalimah Arab atau perkataan seperti 'getar', 'pertandingan', atau 'tadarus'. Ustaz AI sedia beri klu yang tepat!";
         }
 
         function paparMesejUser(t) {
